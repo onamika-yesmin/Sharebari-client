@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import { ItemCard } from "@/components/ItemCard";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
-import { categoryName, formatMoney, getItem, rentalItems } from "@/lib/data";
+import { getItemById, getItems } from "@/lib/api";
+import { categoryName, formatMoney, rentalItems } from "@/lib/data";
 
 export function generateStaticParams() {
   return rentalItems.map((item) => ({ id: item.id }));
@@ -11,10 +12,11 @@ export function generateStaticParams() {
 
 export default async function ItemDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const item = getItem(id);
+  const item = await getItemById(id);
   if (!item) notFound();
 
-  const related = rentalItems.filter((candidate) => candidate.category === item.category && candidate.id !== item.id).slice(0, 4);
+  const relatedResult = await getItems(`?category=${item.category}`);
+  const related = relatedResult.items.filter((candidate) => candidate.id !== item.id).slice(0, 4);
 
   return (
     <div className="site-shell">
@@ -64,7 +66,7 @@ export default async function ItemDetailsPage({ params }: { params: Promise<{ id
           <div className="panel">
             <h2>Owner Information</h2>
             <p>{item.owner.name}</p>
-            <p>{item.owner.location}</p>
+            <p>{item.owner.location || item.location}</p>
             <p>Contact details are visible after login.</p>
             <Link className="button-ghost" href="/login">Login to View Contact</Link>
           </div>

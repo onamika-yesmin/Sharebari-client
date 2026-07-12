@@ -1,7 +1,8 @@
 import { ItemCard } from "@/components/ItemCard";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
-import { categories, rentalItems } from "@/lib/data";
+import { getItems } from "@/lib/api";
+import { categories } from "@/lib/data";
 
 type ExploreSearch = {
   search?: string;
@@ -14,19 +15,11 @@ type ExploreSearch = {
 
 export default async function ExplorePage({ searchParams }: { searchParams: Promise<ExploreSearch> }) {
   const params = await searchParams;
-  const query = (params.search ?? "").toLowerCase();
-  const filtered = rentalItems
-    .filter((item) => !query || [item.title, item.shortDescription, item.location].join(" ").toLowerCase().includes(query))
-    .filter((item) => !params.category || item.category === params.category)
-    .filter((item) => !params.location || item.location.toLowerCase().includes(params.location.toLowerCase()))
-    .filter((item) => !params.condition || item.condition === params.condition)
-    .filter((item) => !params.availability || item.availability === params.availability)
-    .sort((a, b) => {
-      if (params.sort === "price-asc") return a.dailyPrice - b.dailyPrice;
-      if (params.sort === "price-desc") return b.dailyPrice - a.dailyPrice;
-      if (params.sort === "rating") return b.rating - a.rating;
-      return 0;
-    });
+  const query = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value) query.set(key, value);
+  });
+  const { items, pagination, source } = await getItems(query.toString() ? `?${query.toString()}` : "");
 
   return (
     <div className="site-shell">
@@ -36,6 +29,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
           <p className="eyebrow">Explore</p>
           <h1>Find rental items nearby.</h1>
           <p className="lead">Search by title, description, or location, then filter by category, condition, and availability.</p>
+          {source === "fallback" ? <p className="notice">Showing sample listings while the API is unavailable or empty.</p> : null}
         </section>
         <form className="filters">
           <input className="field" name="search" defaultValue={params.search} placeholder="Search items" />
@@ -61,10 +55,10 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
           <button className="button" type="submit">Apply</button>
         </form>
         <div className="grid grid-4">
-          {filtered.map((item) => <ItemCard item={item} key={item.id} />)}
+          {items.map((item) => <ItemCard item={item} key={item.id} />)}
         </div>
         <div className="section-head" style={{ marginTop: 24 }}>
-          <p>Showing {filtered.length} of {rentalItems.length} items. Pagination is prepared for 12 items per page as listings grow.</p>
+          <p>Showing {items.length} of {pagination.total} items. Page {pagination.page} of {pagination.totalPages}.</p>
         </div>
       </main>
       <SiteFooter />

@@ -8,6 +8,8 @@ export type ItemCategory =
 
 export type RentalItem = {
   id: string;
+  _id?: string;
+  slug?: string;
   title: string;
   shortDescription: string;
   fullDescription: string;
@@ -23,7 +25,7 @@ export type RentalItem = {
   images: string[];
   rating: number;
   featured: boolean;
-  owner: { name: string; location: string; phone: string; email: string };
+  owner: { name: string; location?: string; phone?: string; email?: string };
 };
 
 export const categories: Array<{ id: ItemCategory; name: string; description: string }> = [
@@ -194,7 +196,7 @@ export function formatMoney(amount: number) {
   return new Intl.NumberFormat("en-BD", { style: "currency", currency: "BDT", maximumFractionDigits: 0 }).format(amount);
 }
 
-export function categoryName(id: ItemCategory) {
+export function categoryName(id: ItemCategory | string) {
   return categories.find((category) => category.id === id)?.name ?? id;
 }
 

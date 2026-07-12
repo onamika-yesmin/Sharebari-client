@@ -2,11 +2,11 @@ import Link from "next/link";
 import { ItemCard } from "@/components/ItemCard";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
-import { categories, rentalItems } from "@/lib/data";
+import { getFeaturedItems, getRecentItems } from "@/lib/api";
+import { categories } from "@/lib/data";
 
-export default function Home() {
-  const featured = rentalItems.filter((item) => item.featured).slice(0, 4);
-  const recent = rentalItems.slice(-4).reverse();
+export default async function Home() {
+  const [featured, recent] = await Promise.all([getFeaturedItems(), getRecentItems()]);
 
   return (
     <div className="site-shell">
@@ -14,7 +14,7 @@ export default function Home() {
       <main>
         <section className="hero">
           <div className="container hero-grid">
-            <div>
+            <div className="hero-copy">
               <p className="eyebrow">Borrow Nearby. Save More. Waste Less.</p>
               <h1>Rent everyday items from people around you.</h1>
               <p className="lead">
@@ -24,19 +24,33 @@ export default function Home() {
                 <Link className="button" href="/explore">Explore Items</Link>
                 <Link className="button-secondary" href="/items/add">Add Your Item</Link>
               </div>
+              <div className="trust-strip" aria-label="ShareBari highlights">
+                <span>Verified local listings</span>
+                <span>Secure checkout ready</span>
+                <span>Built for Bangladesh</span>
+              </div>
             </div>
             <form className="search-panel" action="/explore">
-              <h3>Find something nearby</h3>
+              <div className="panel-title-row">
+                <h3>Find something nearby</h3>
+                <span className="badge badge-warm">Live search</span>
+              </div>
               <div className="field-grid">
                 <input className="field" name="search" placeholder="Search camera, drill, tent" />
                 <input className="field" name="location" placeholder="Location" />
                 <button className="button" type="submit">Search</button>
               </div>
-              <img
-                className="hero-photo"
-                src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1100&q=80"
-                alt="Shared home tools ready for rental"
-              />
+              <div className="hero-media-stack">
+                <img
+                  className="hero-photo"
+                  src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1100&q=80"
+                  alt="Shared home tools ready for rental"
+                />
+                <div className="floating-proof">
+                  <strong>৳ 450/day</strong>
+                  <span>Drill kit near Khulna</span>
+                </div>
+              </div>
             </form>
           </div>
         </section>
@@ -52,7 +66,7 @@ export default function Home() {
             </div>
             <div className="grid grid-3">
               {categories.map((category) => (
-                <Link className="card" href={`/explore?category=${category.id}`} key={category.id}>
+                <Link className="category-card" href={`/explore?category=${category.id}`} key={category.id}>
                   <h3>{category.name}</h3>
                   <p>{category.description}</p>
                 </Link>
@@ -79,7 +93,7 @@ export default function Home() {
         <section className="section-soft">
           <div className="container grid grid-3">
             {["Search nearby listings", "Confirm rental details", "Pick up and return"].map((step, index) => (
-              <div className="card" key={step}>
+              <div className="step-card" key={step}>
                 <span className="badge">Step {index + 1}</span>
                 <h3>{step}</h3>
                 <p>Simple rental flow designed for short-term needs, clear pricing, and trusted local owners.</p>
@@ -96,7 +110,7 @@ export default function Home() {
             </div>
             <div className="grid grid-2">
               <div className="panel stat"><strong>72%</strong><span>estimated savings on one-time needs</span></div>
-              <div className="panel stat"><strong>8</strong><span>active starter listings</span></div>
+              <div className="panel stat"><strong>{recent.length + featured.length}</strong><span>marketplace listings shown</span></div>
               <div className="panel stat"><strong>6</strong><span>major rental categories</span></div>
               <div className="panel stat"><strong>4.6</strong><span>average item rating</span></div>
             </div>
