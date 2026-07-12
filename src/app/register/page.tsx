@@ -6,11 +6,16 @@ export default function RegisterPage() {
   return (
     <div className="site-shell">
       <SiteHeader />
-      <main className="container">
-        <section className="page-title">
-          <p className="eyebrow">Register</p>
-          <h1>Create your ShareBari account.</h1>
-          <p className="lead">Use one account to rent, list, pay, and track marketplace activity.</p>
+      <main className="auth-page">
+        <section className="auth-copy" aria-labelledby="register-title">
+          <p className="eyebrow">Start sharing</p>
+          <h1 id="register-title">Build your local rental profile.</h1>
+          <p className="lead">Create one account to list items, rent from nearby owners, and manage payments.</p>
+          <div className="auth-proof-grid">
+            <span>Verified account flow</span>
+            <span>Owner dashboard</span>
+            <span>Secure checkout</span>
+          </div>
         </section>
         <AuthForm mode="register" />
       </main>

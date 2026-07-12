@@ -530,8 +530,118 @@ h3 {
   padding: 12px 14px;
 }
 
+.auth-page {
+  width: min(1120px, calc(100% - 32px));
+  min-height: calc(100vh - 72px);
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(380px, 0.68fr);
+  align-items: center;
+  gap: 56px;
+  margin: 0 auto;
+  padding: 54px 0;
+}
+
+.auth-copy {
+  max-width: 650px;
+}
+
+.auth-copy h1 {
+  max-width: 650px;
+  font-size: clamp(2.8rem, 5vw, 4.8rem);
+}
+
+.auth-proof-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.auth-proof-grid span {
+  min-height: 68px;
+  display: flex;
+  align-items: center;
+  border-left: 3px solid var(--primary);
+  background: rgba(255, 255, 255, 0.62);
+  padding: 12px 14px;
+  color: #2b3d37;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
 .auth-panel {
-  max-width: 760px;
+  display: grid;
+  gap: 18px;
+  border: 1px solid rgba(20, 32, 31, 0.11);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 24px 70px rgba(20, 32, 31, 0.1);
+  padding: 28px;
+}
+
+.auth-panel-head {
+  display: grid;
+  gap: 6px;
+}
+
+.auth-panel-head p {
+  margin: 0;
+  color: var(--primary);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.auth-panel-head h2 {
+  font-size: 1.65rem;
+  line-height: 1.18;
+}
+
+.google-auth-row {
+  min-height: 44px;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  height: 1px;
+  flex: 1;
+  background: var(--line);
+}
+
+.auth-form label {
+  display: grid;
+  gap: 7px;
+}
+
+.auth-form label span {
+  color: #273b35;
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.auth-submit {
+  width: 100%;
+}
+
+.auth-switch {
+  margin: 0;
+  color: var(--muted);
+  text-align: center;
+}
+
+.auth-switch a {
+  color: var(--primary-dark);
+  font-weight: 900;
 }
 
 .checkout-card {
@@ -570,8 +680,14 @@ h3 {
   .hero-grid,
   .details-grid,
   .manage-row,
-  .footer-grid {
+  .footer-grid,
+  .auth-page {
     grid-template-columns: 1fr;
+  }
+
+  .auth-page {
+    align-items: start;
+    gap: 28px;
   }
 
   .grid-4,
@@ -603,8 +719,18 @@ h3 {
   .grid-4,
   .grid-3,
   .grid-2,
-  .form-grid {
+  .form-grid,
+  .auth-proof-grid {
     grid-template-columns: 1fr;
+  }
+
+  .auth-page {
+    width: min(100% - 24px, 1120px);
+    padding: 34px 0;
+  }
+
+  .auth-panel {
+    padding: 22px;
   }
 
   .section,

@@ -6,11 +6,16 @@ export default function LoginPage() {
   return (
     <div className="site-shell">
       <SiteHeader />
-      <main className="container">
-        <section className="page-title">
-          <p className="eyebrow">Login</p>
-          <h1>Welcome back.</h1>
-          <p className="lead">Sign in to manage listings, start checkout, and see owner dashboard data.</p>
+      <main className="auth-page">
+        <section className="auth-copy" aria-labelledby="login-title">
+          <p className="eyebrow">Secure access</p>
+          <h1 id="login-title">Manage your rentals with confidence.</h1>
+          <p className="lead">Sign in to track listings, availability, checkout activity, and owner dashboard data.</p>
+          <div className="auth-proof-grid">
+            <span>Protected owner tools</span>
+            <span>Live listing data</span>
+            <span>Checkout ready</span>
+          </div>
         </section>
         <AuthForm mode="login" />
       </main>
