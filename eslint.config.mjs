@@ -1,6 +1,12 @@
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTypeScript from "eslint-config-next/typescript";
 
-const eslintConfig = [...nextVitals, ...nextTypeScript];
+const eslintConfig = [
+  {
+    ignores: [".next/**", ".next-sharebari/**", "out/**", "build/**", "next-env.d.ts"],
+  },
+  ...nextVitals,
+  ...nextTypeScript,
+];
 
 export default eslintConfig;
