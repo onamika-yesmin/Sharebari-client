@@ -5,12 +5,18 @@ import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { ApiError, getDashboardStats, type DashboardStats } from "@/lib/api";
 
+function hasAuthMarker() {
+  return typeof window !== "undefined" && window.localStorage.getItem("sharebari_authenticated") === "true";
+}
+
 export function DashboardClient() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [message, setMessage] = useState("Loading dashboard...");
-  const [isUnauthorized, setIsUnauthorized] = useState(false);
+  const [message, setMessage] = useState(() => hasAuthMarker() ? "Loading dashboard..." : "Please log in to view your dashboard.");
+  const [isUnauthorized, setIsUnauthorized] = useState(() => !hasAuthMarker());
 
   useEffect(() => {
+    if (!hasAuthMarker()) return;
+
     getDashboardStats()
       .then((data) => {
         setStats(data);
@@ -18,6 +24,9 @@ export function DashboardClient() {
       })
       .catch((error) => {
         setIsUnauthorized(error instanceof ApiError && error.status === 401);
+        if (error instanceof ApiError && error.status === 401) {
+          window.localStorage.removeItem("sharebari_authenticated");
+        }
         setMessage(error instanceof Error ? error.message : "Could not load dashboard");
       });
   }, []);

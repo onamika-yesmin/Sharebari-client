@@ -22,6 +22,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
 
     try {
       await apiPost(mode === "login" ? "/api/auth/login" : "/api/auth/register", body);
+      window.localStorage.setItem("sharebari_authenticated", "true");
       router.push("/dashboard");
       router.refresh();
     } catch (error) {
