@@ -1,12 +1,14 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { getDashboardStats, type DashboardStats } from "@/lib/api";
+import { ApiError, getDashboardStats, type DashboardStats } from "@/lib/api";
 
 export function DashboardClient() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [message, setMessage] = useState("Loading dashboard...");
+  const [isUnauthorized, setIsUnauthorized] = useState(false);
 
   useEffect(() => {
     getDashboardStats()
@@ -14,11 +16,19 @@ export function DashboardClient() {
         setStats(data);
         setMessage("");
       })
-      .catch((error) => setMessage(error instanceof Error ? error.message : "Could not load dashboard"));
+      .catch((error) => {
+        setIsUnauthorized(error instanceof ApiError && error.status === 401);
+        setMessage(error instanceof Error ? error.message : "Could not load dashboard");
+      });
   }, []);
 
   if (!stats) {
-    return <div className="panel empty-state">{message}</div>;
+    return (
+      <div className="panel empty-state">
+        <p>{isUnauthorized ? "Please log in to view your dashboard." : message}</p>
+        {isUnauthorized ? <Link className="button" href="/login">Login</Link> : null}
+      </div>
+    );
   }
 
   const categoryData = stats.byCategory?.map((item) => ({ name: item._id, count: item.count })) || [];

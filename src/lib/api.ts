@@ -16,6 +16,16 @@ export type DashboardStats = {
   byAvailability?: Array<{ _id: string; count: number }>;
 };
 
+export class ApiError extends Error {
+  status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+  }
+}
+
 export const apiBaseUrl =
   process.env.NEXT_PUBLIC_API_BASE_URL ||
   process.env.NEXT_PUBLIC_API_URL ||
@@ -64,7 +74,7 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
 
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
-    throw new Error(payload.message || "Request failed");
+    throw new ApiError(payload.message || "Request failed", response.status);
   }
 
   return payload as T;
