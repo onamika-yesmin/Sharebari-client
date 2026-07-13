@@ -98,7 +98,7 @@ export function DashboardClient() {
               <XAxis dataKey="name" tick={{ fontSize: 11 }} />
               <YAxis allowDecimals={false} />
               <Tooltip />
-              <Bar dataKey="count" fill="#16745f" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="count" fill="#2f6f5e" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -113,7 +113,7 @@ export function DashboardClient() {
               <XAxis dataKey="name" tick={{ fontSize: 12 }} />
               <YAxis allowDecimals={false} />
               <Tooltip />
-              <Bar dataKey="count" fill="#d97706" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="count" fill="#8a623a" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

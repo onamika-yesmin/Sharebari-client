@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Star } from "lucide-react";
 import { categoryName, formatMoney, type RentalItem } from "@/lib/data";
 
 export function ItemCard({ item }: { item: RentalItem }) {
@@ -15,7 +16,7 @@ export function ItemCard({ item }: { item: RentalItem }) {
         <div className="meta-row">
           <span>{item.location}</span>
           <span>{item.condition}</span>
-          <span>{item.rating.toFixed(1)} rating</span>
+          <span className="rating-pill"><Star size={14} aria-hidden="true" /> {item.rating.toFixed(1)}</span>
         </div>
         <div className="price">{formatMoney(item.dailyPrice)} / day</div>
         <Link className="button-ghost" href={`/items/${item.id}`}>View Details</Link>
