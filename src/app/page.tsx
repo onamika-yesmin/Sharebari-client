@@ -24,6 +24,11 @@ export default async function Home() {
                 <Link className="button" href="/explore">Explore Items</Link>
                 <Link className="button-secondary" href="/items/add">Add Your Item</Link>
               </div>
+              <div className="hero-mini-stats" aria-label="Marketplace quick facts">
+                <span><strong>1 day</strong> rentals welcome</span>
+                <span><strong>Local</strong> owner pickup</span>
+                <span><strong>Smart</strong> budget choice</span>
+              </div>
               <div className="trust-strip" aria-label="ShareBari highlights">
                 <span>Verified local listings</span>
                 <span>Secure checkout ready</span>
@@ -47,7 +52,7 @@ export default async function Home() {
                   alt="Shared home tools ready for rental"
                 />
                 <div className="floating-proof">
-                  <strong>৳ 450/day</strong>
+                  <strong>Tk 450/day</strong>
                   <span>Drill kit near Khulna</span>
                 </div>
               </div>

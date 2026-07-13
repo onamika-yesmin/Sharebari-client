@@ -5,7 +5,15 @@ export function SiteFooter() {
     <footer className="footer">
       <div className="container footer-grid">
         <div>
-          <h3>ShareBari</h3>
+          <Link className="brand footer-brand" href="/">
+            <span className="logo-mark" aria-hidden="true">
+              <span>SB</span>
+            </span>
+            <span className="brand-copy">
+              <strong>ShareBari</strong>
+              <small>Borrow Nearby. Save More.</small>
+            </span>
+          </Link>
           <p>Borrow useful items from nearby people and keep one-time purchases out of your budget.</p>
         </div>
         <div className="footer-links">

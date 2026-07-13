@@ -83,8 +83,13 @@ export function SiteHeader() {
     <header className="header">
       <nav className="container nav" aria-label="Main navigation">
         <Link className="brand" href="/">
-          ShareBari
-          <span>Borrow Nearby. Save More.</span>
+          <span className="logo-mark" aria-hidden="true">
+            <span>SB</span>
+          </span>
+          <span className="brand-copy">
+            <strong>ShareBari</strong>
+            <small>Borrow Nearby. Save More.</small>
+          </span>
         </Link>
         <div className="nav-links">
           {publicLinks.map((link) => (
