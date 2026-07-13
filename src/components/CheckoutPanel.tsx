@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowLeft, CreditCard, Send } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { createCheckoutSession, createRentalRequest, getMyRentalRequests, type RentalRequest } from "@/lib/api";
@@ -108,13 +109,20 @@ export function CheckoutPanel({ item, initialRentalDays }: { item: RentalItem; i
       {message ? <p className="notice">{message}</p> : null}
       <div className="action-row">
         {currentRequest?.status === "accepted" ? (
-          <button className="button" type="button" disabled={isPaying} onClick={handlePay}>{isPaying ? "Opening Stripe..." : "Pay on Stripe"}</button>
+          <button className="button" type="button" disabled={isPaying} onClick={handlePay}>
+            <CreditCard size={17} aria-hidden="true" />
+            {isPaying ? "Opening Stripe..." : "Pay on Stripe"}
+          </button>
         ) : (
           <button className="button" type="submit" disabled={isLoading || currentRequest?.status === "pending" || currentRequest?.status === "paid"}>
+            <Send size={17} aria-hidden="true" />
             {isLoading ? "Sending..." : currentRequest?.status === "pending" ? "Waiting for Owner" : currentRequest?.status === "paid" ? "Already Paid" : "Send Rental Request"}
           </button>
         )}
-        <Link className="button-ghost" href={`/items/${item.id}`}>Back to Item</Link>
+        <Link className="button-ghost" href={`/items/${item.id}`}>
+          <ArrowLeft size={17} aria-hidden="true" />
+          Back to Item
+        </Link>
       </div>
     </form>
   );

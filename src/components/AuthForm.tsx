@@ -1,6 +1,7 @@
 "use client";
 
 import { GoogleLogin } from "@react-oauth/google";
+import { LogIn, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
@@ -151,7 +152,10 @@ export function AuthForm({ mode }: { mode: Mode }) {
           </label>
         ) : null}
         {message ? <p className="notice full">{message}</p> : null}
-        <button className="button auth-submit full" type="submit" disabled={isLoading}>{isLoading ? "Please wait..." : mode === "login" ? "Sign in" : "Create account"}</button>
+        <button className="button auth-submit full" type="submit" disabled={isLoading}>
+          {mode === "login" ? <LogIn size={17} aria-hidden="true" /> : <UserPlus size={17} aria-hidden="true" />}
+          {isLoading ? "Please wait..." : mode === "login" ? "Sign in" : "Create account"}
+        </button>
       </form>
 
       <p className="auth-switch">

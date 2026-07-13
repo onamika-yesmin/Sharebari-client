@@ -1,5 +1,6 @@
 "use client";
 
+import { Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { apiPost } from "@/lib/api";
@@ -71,7 +72,10 @@ export function AddItemForm() {
       <input className="field full" name="image2" placeholder="Image URL 2" type="url" />
       <input className="field full" name="image3" placeholder="Image URL 3" type="url" />
       {message ? <p className="notice full">{message}</p> : null}
-      <button className="button" type="submit" disabled={isLoading}>{isLoading ? "Saving..." : "Save Item"}</button>
+      <button className="button" type="submit" disabled={isLoading}>
+        <Save size={17} aria-hidden="true" />
+        {isLoading ? "Saving..." : "Save Item"}
+      </button>
     </form>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { Compass, Grid3X3, Home, Info, LayoutDashboard, LogOut, Menu, PackageSearch, Phone, Plus, Route, UserRound, X } from "lucide-react";
+import { Compass, Grid3X3, Home, Info, LayoutDashboard, LogIn, LogOut, Menu, PackageSearch, Phone, Plus, Route, UserPlus, UserRound, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -175,8 +175,14 @@ export function SiteHeader() {
             </div>
           ) : (
             <div className="auth-nav">
-              <Link className="button-ghost" href="/login">Login</Link>
-              <Link className="button" href="/register">Register</Link>
+              <Link className="button-ghost" href="/login">
+                <LogIn size={17} aria-hidden="true" />
+                Login
+              </Link>
+              <Link className="button" href="/register">
+                <UserPlus size={17} aria-hidden="true" />
+                Register
+              </Link>
             </div>
           )}
         </div>
@@ -278,8 +284,14 @@ export function SiteHeader() {
           </div>
         ) : (
           <div className="offcanvas-auth">
-            <Link className="button-ghost" href="/login" onClick={() => setIsMenuOpen(false)}>Login</Link>
-            <Link className="button" href="/register" onClick={() => setIsMenuOpen(false)}>Register</Link>
+            <Link className="button-ghost" href="/login" onClick={() => setIsMenuOpen(false)}>
+              <LogIn size={17} aria-hidden="true" />
+              Login
+            </Link>
+            <Link className="button" href="/register" onClick={() => setIsMenuOpen(false)}>
+              <UserPlus size={17} aria-hidden="true" />
+              Register
+            </Link>
           </div>
         )}
       </aside>

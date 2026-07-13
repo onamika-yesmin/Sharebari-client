@@ -1,5 +1,6 @@
 "use client";
 
+import { Send } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -36,7 +37,10 @@ export default function ContactPage() {
           <input className="field" name="email" type="email" placeholder="Email" required />
           <input className="field full" name="subject" placeholder="Subject" required />
           <textarea className="textarea full" name="message" placeholder="Message" required />
-          <button className="button" type="submit">Submit Message</button>
+          <button className="button" type="submit">
+            <Send size={17} aria-hidden="true" />
+            Submit Message
+          </button>
         </form>
       </main>
       <SiteFooter />

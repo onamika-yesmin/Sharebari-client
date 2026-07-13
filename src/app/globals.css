@@ -5077,3 +5077,38 @@ h3,
     grid-template-columns: 1fr;
   }
 }
+
+/* Button icon polish */
+.button,
+.button-secondary,
+.button-ghost,
+.nav-link,
+.offcanvas-link {
+  gap: 8px;
+}
+
+.button svg,
+.button-secondary svg,
+.button-ghost svg,
+.nav-link svg,
+.offcanvas-link svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  display: inline-block;
+  flex: 0 0 1.05rem;
+  stroke-width: 2.25;
+}
+
+.button svg,
+.nav-link.active svg,
+.offcanvas-link.active svg {
+  color: currentColor;
+}
+
+.button-ghost svg,
+.button-secondary svg,
+.nav-link svg,
+.offcanvas-link svg {
+  color: currentColor;
+  opacity: 0.9;
+}

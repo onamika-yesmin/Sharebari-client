@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CreditCard, LogIn } from "lucide-react";
 import { notFound } from "next/navigation";
 import { ItemCard } from "@/components/ItemCard";
 import { PageHero } from "@/components/PageHero";
@@ -50,7 +51,10 @@ export default async function ItemDetailsPage({ params }: { params: Promise<{ id
                 Rental days
                 <input className="field" name="days" type="number" min={item.minimumRentalDays} defaultValue={item.minimumRentalDays} />
               </label>
-              <button className="button" type="submit">Continue to Checkout</button>
+              <button className="button" type="submit">
+                <CreditCard size={17} aria-hidden="true" />
+                Continue to Checkout
+              </button>
             </form>
           </aside>
         </section>
@@ -71,7 +75,10 @@ export default async function ItemDetailsPage({ params }: { params: Promise<{ id
             <p>{item.owner.name}</p>
             <p>{item.owner.location || item.location}</p>
             <p>Contact details are visible after login.</p>
-            <Link className="button-ghost" href="/login">Login to View Contact</Link>
+            <Link className="button-ghost" href="/login">
+              <LogIn size={17} aria-hidden="true" />
+              Login to View Contact
+            </Link>
           </div>
           <div className="panel">
             <h2>Rental Information</h2>

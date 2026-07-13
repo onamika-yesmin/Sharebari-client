@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Eye, Trash2, X } from "lucide-react";
+import { Check, Eye, Plus, Trash2, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LoadingState } from "@/components/LoadingState";
@@ -68,7 +68,10 @@ export function ManageItemsClient() {
     return (
       <div className="panel empty-state">
         <p>{message}</p>
-        <Link className="button" href="/items/add">Add first item</Link>
+        <Link className="button" href="/items/add">
+          <Plus size={17} aria-hidden="true" />
+          Add first item
+        </Link>
       </div>
     );
   }

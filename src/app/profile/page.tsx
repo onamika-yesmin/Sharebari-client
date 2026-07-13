@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { LogIn, Save } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
 import { LoadingState } from "@/components/LoadingState";
 import { PageHero } from "@/components/PageHero";
@@ -87,7 +88,10 @@ export default function ProfilePage() {
           isUnauthorized ? (
             <div className="panel empty-state">
               <p>{message}</p>
-              <Link className="button" href="/login">Login</Link>
+              <Link className="button" href="/login">
+                <LogIn size={17} aria-hidden="true" />
+                Login
+              </Link>
             </div>
           ) : (
             <LoadingState label={message} />
@@ -117,7 +121,10 @@ export default function ProfilePage() {
             <input className="field" name="phone" defaultValue={user.phone || ""} placeholder="Phone" />
             <input className="field" name="location" defaultValue={user.location || ""} placeholder="Location" />
             {message ? <p className="notice full">{message}</p> : null}
-            <button className="button" type="submit" disabled={isLoading}>{isLoading ? "Saving..." : "Save Profile"}</button>
+            <button className="button" type="submit" disabled={isLoading}>
+              <Save size={17} aria-hidden="true" />
+              {isLoading ? "Saving..." : "Save Profile"}
+            </button>
           </form>
         )}
       </main>

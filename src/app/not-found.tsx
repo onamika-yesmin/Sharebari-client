@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowLeft, Compass } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -17,8 +18,14 @@ export default function NotFound() {
             imageAlt="Packed shelves of useful items"
             actions={
               <>
-              <Link className="button" href="/explore">Explore Items</Link>
-              <Link className="button-ghost" href="/">Back Home</Link>
+              <Link className="button" href="/explore">
+                <Compass size={17} aria-hidden="true" />
+                Explore Items
+              </Link>
+              <Link className="button-ghost" href="/">
+                <ArrowLeft size={17} aria-hidden="true" />
+                Back Home
+              </Link>
               </>
             }
           />

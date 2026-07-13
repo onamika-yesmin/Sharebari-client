@@ -1,6 +1,6 @@
 "use client";
 
-import { Boxes, CalendarClock, CircleDollarSign, Crown, Gauge, PackageCheck, ShieldCheck, UserRound, UsersRound } from "lucide-react";
+import { Boxes, CalendarClock, CircleDollarSign, Compass, CreditCard, Crown, Gauge, LogIn, PackageCheck, PackageSearch, Pencil, Plus, ShieldCheck, UserRound, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
@@ -113,7 +113,12 @@ export function DashboardClient() {
     return (
       <div className="panel empty-state">
         <p>{isUnauthorized ? "Please log in to view your dashboard." : message}</p>
-        {isUnauthorized ? <Link className="button" href="/login">Login</Link> : null}
+        {isUnauthorized ? (
+          <Link className="button" href="/login">
+            <LogIn size={17} aria-hidden="true" />
+            Login
+          </Link>
+        ) : null}
       </div>
     );
   }
@@ -266,8 +271,14 @@ export function DashboardClient() {
           <h3>Owner actions</h3>
           <p>Keep item data fresh so renters can trust price, condition, and pickup expectations.</p>
           <div className="action-row">
-            <Link className="button" href="/items/add">Add item</Link>
-            <Link className="button-ghost" href="/items/manage">Manage listings</Link>
+            <Link className="button" href="/items/add">
+              <Plus size={17} aria-hidden="true" />
+              Add item
+            </Link>
+            <Link className="button-ghost" href="/items/manage">
+              <PackageSearch size={17} aria-hidden="true" />
+              Manage listings
+            </Link>
           </div>
         </div> : null}
         {activeTab === "renter" ? <div className="panel workspace-panel rental-requests-panel">
@@ -290,6 +301,7 @@ export function DashboardClient() {
                   <span className="badge">{request.status}</span>
                   {request.status === "accepted" ? (
                     <button className="button" type="button" disabled={payingRequestId === request._id} onClick={() => payAcceptedRequest(request._id)}>
+                      <CreditCard size={17} aria-hidden="true" />
                       {payingRequestId === request._id ? "Opening..." : "Pay"}
                     </button>
                   ) : null}
@@ -298,24 +310,42 @@ export function DashboardClient() {
             </div>
           )}
           <div className="action-row">
-            <Link className="button-secondary" href="/explore">Explore rentals</Link>
-            <Link className="button-ghost" href="/profile">Update profile</Link>
+            <Link className="button-secondary" href="/explore">
+              <Compass size={17} aria-hidden="true" />
+              Explore rentals
+            </Link>
+            <Link className="button-ghost" href="/profile">
+              <Pencil size={17} aria-hidden="true" />
+              Update profile
+            </Link>
           </div>
         </div> : null}
         {activeTab === "profile" ? <div className="panel workspace-panel">
           <h3>Profile settings</h3>
           <p>Update your name, contact details, location, and profile image.</p>
           <div className="action-row">
-            <Link className="button" href="/profile">Edit profile</Link>
-            <Link className="button-ghost" href="/items/manage">My listings</Link>
+            <Link className="button" href="/profile">
+              <Pencil size={17} aria-hidden="true" />
+              Edit profile
+            </Link>
+            <Link className="button-ghost" href="/items/manage">
+              <PackageSearch size={17} aria-hidden="true" />
+              My listings
+            </Link>
           </div>
         </div> : null}
         {activeTab === "admin" && isAdmin ? <div className="panel workspace-panel">
           <h3>Admin actions</h3>
           <p>Use the role dropdowns above to promote admins or return accounts to regular user access.</p>
           <div className="action-row">
-            <Link className="button" href="/items/manage">Review my listings</Link>
-            <Link className="button-ghost" href="/explore">Browse marketplace</Link>
+            <Link className="button" href="/items/manage">
+              <PackageSearch size={17} aria-hidden="true" />
+              Review my listings
+            </Link>
+            <Link className="button-ghost" href="/explore">
+              <Compass size={17} aria-hidden="true" />
+              Browse marketplace
+            </Link>
           </div>
         </div> : null}
       </section>

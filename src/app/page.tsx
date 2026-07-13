@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Compass, Gauge, Grid3X3, HelpCircle, LayoutDashboard, PlusCircle, Search, Sparkles } from "lucide-react";
 import { ItemCard } from "@/components/ItemCard";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -35,7 +36,10 @@ export default async function Home() {
                   {categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}
                 </select>
                 <input className="field" name="location" placeholder="City or area" />
-                <button className="button" type="submit">Search</button>
+                <button className="button" type="submit">
+                  <Search size={17} aria-hidden="true" />
+                  Search
+                </button>
               </form>
               <div className="home-quick-links" aria-label="Popular locations">
                 {locations.map((location) => (
@@ -61,7 +65,10 @@ export default async function Home() {
           <div className="container">
             <div className="home-rail-head">
               <h2>Browse by need</h2>
-              <Link className="button-ghost" href="/categories">All categories</Link>
+              <Link className="button-ghost" href="/categories">
+                <Grid3X3 size={17} aria-hidden="true" />
+                All categories
+              </Link>
             </div>
             <div className="home-category-grid">
               {categories.map((category) => (
@@ -82,8 +89,14 @@ export default async function Home() {
                 <p>Well-rated listings with clear prices, deposits, and pickup locations.</p>
               </div>
               <div className="action-row">
-                <Link className="button-ghost" href="/explore?sort=rating">Highest rated</Link>
-                <Link className="button" href="/explore">Explore all</Link>
+                <Link className="button-ghost" href="/explore?sort=rating">
+                  <Sparkles size={17} aria-hidden="true" />
+                  Highest rated
+                </Link>
+                <Link className="button" href="/explore">
+                  <Compass size={17} aria-hidden="true" />
+                  Explore all
+                </Link>
               </div>
             </div>
             <div className="grid grid-4">
@@ -100,8 +113,14 @@ export default async function Home() {
               <p>Publish items, manage availability, and keep your neighborhood stocked with practical rentals.</p>
             </div>
             <div className="home-owner-actions">
-              <Link className="button" href="/items/add">List an item</Link>
-              <Link className="button-ghost" href="/dashboard">Open dashboard</Link>
+              <Link className="button" href="/items/add">
+                <PlusCircle size={17} aria-hidden="true" />
+                List an item
+              </Link>
+              <Link className="button-ghost" href="/dashboard">
+                <LayoutDashboard size={17} aria-hidden="true" />
+                Open dashboard
+              </Link>
             </div>
           </div>
         </section>
@@ -128,7 +147,10 @@ export default async function Home() {
                 <h2>Recently added</h2>
                 <p>Fresh listings from owners who want their useful items to work harder.</p>
               </div>
-              <Link className="button-ghost" href="/explore?sort=newest">Newest first</Link>
+              <Link className="button-ghost" href="/explore?sort=newest">
+                <Gauge size={17} aria-hidden="true" />
+                Newest first
+              </Link>
             </div>
             <div className="grid grid-4">
               {recent.map((item) => <ItemCard item={item} key={item.id} />)}
@@ -151,8 +173,14 @@ export default async function Home() {
               <p>Read the help page or start exploring nearby items now.</p>
             </div>
             <div className="action-row">
-              <Link className="button-ghost" href="/help">Help Center</Link>
-              <Link className="button" href="/explore">Browse Items</Link>
+              <Link className="button-ghost" href="/help">
+                <HelpCircle size={17} aria-hidden="true" />
+                Help Center
+              </Link>
+              <Link className="button" href="/explore">
+                <Compass size={17} aria-hidden="true" />
+                Browse Items
+              </Link>
             </div>
           </div>
         </section>

@@ -4,6 +4,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { getItems } from "@/lib/api";
 import { categories } from "@/lib/data";
+import { SlidersHorizontal } from "lucide-react";
 
 type ExploreSearch = {
   search?: string;
@@ -56,7 +57,10 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
             <option value="price-desc">Price high to low</option>
             <option value="rating">Highest rating</option>
           </select>
-          <button className="button" type="submit">Apply</button>
+          <button className="button" type="submit">
+            <SlidersHorizontal size={17} aria-hidden="true" />
+            Apply
+          </button>
         </form>
         <div className="grid grid-4">
           {items.map((item) => <ItemCard item={item} key={item.id} />)}
