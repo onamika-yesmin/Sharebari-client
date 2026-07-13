@@ -202,6 +202,11 @@ export async function apiPatch<T>(path: string, body: unknown) {
   });
 }
 
+export async function updateCurrentUser(body: Pick<CurrentUser, "name" | "email" | "phone" | "location" | "avatar">) {
+  const payload = await apiPatch<{ data: CurrentUser }>("/api/auth/me", body);
+  return payload.data;
+}
+
 export async function logoutUser() {
   return apiFetch<{ message?: string }>("/api/auth/logout", { method: "POST" });
 }

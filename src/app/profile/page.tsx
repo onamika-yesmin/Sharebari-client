@@ -1,10 +1,76 @@
 "use client";
 
+import Link from "next/link";
+import { useEffect, useState, type FormEvent } from "react";
+import { LoadingState } from "@/components/LoadingState";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
-import { showSuccess } from "@/lib/alerts";
+import { showError, showSuccess } from "@/lib/alerts";
+import { getCurrentUser, updateCurrentUser, type CurrentUser } from "@/lib/api";
+import { uploadAvatar } from "@/lib/upload";
+
+function hasAuthMarker() {
+  return typeof window !== "undefined" && window.localStorage.getItem("sharebari_authenticated") === "true";
+}
 
 export default function ProfilePage() {
+  const [user, setUser] = useState<CurrentUser | null>(null);
+  const [message, setMessage] = useState("Loading profile...");
+  const [avatarPreview, setAvatarPreview] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isUnauthorized, setIsUnauthorized] = useState(false);
+
+  useEffect(() => {
+    if (!hasAuthMarker()) {
+      Promise.resolve().then(() => {
+        setIsUnauthorized(true);
+        setMessage("Please log in to update your profile.");
+      });
+      return;
+    }
+
+    getCurrentUser()
+      .then((data) => {
+        setUser(data);
+        setAvatarPreview(data.avatar || "");
+        setMessage("");
+      })
+      .catch((error) => {
+        setMessage(error instanceof Error ? error.message : "Could not load profile");
+      });
+  }, []);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setIsLoading(true);
+    setMessage("");
+
+    const form = new FormData(event.currentTarget);
+    const avatarFile = form.get("avatarFile");
+
+    try {
+      const avatar = avatarFile instanceof File && avatarFile.size > 0
+        ? await uploadAvatar(avatarFile)
+        : avatarPreview;
+      const updatedUser = await updateCurrentUser({
+        name: String(form.get("name") || ""),
+        email: String(form.get("email") || ""),
+        phone: String(form.get("phone") || ""),
+        location: String(form.get("location") || ""),
+        avatar,
+      });
+      setUser(updatedUser);
+      setAvatarPreview(updatedUser.avatar || "");
+      await showSuccess("Profile saved", "Your profile has been updated.");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Could not save profile";
+      setMessage(errorMessage);
+      await showError("Could not save profile", errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
     <div className="site-shell">
       <SiteHeader />
@@ -13,19 +79,43 @@ export default function ProfilePage() {
           <p className="eyebrow">Protected</p>
           <h1>Your profile.</h1>
         </section>
-        <form
-          className="panel form-grid"
-          onSubmit={async (event) => {
-            event.preventDefault();
-            await showSuccess("Profile saved", "Your profile changes are ready for backend connection.");
-          }}
-        >
-          <input className="field" defaultValue="ShareBari Demo User" />
-          <input className="field" defaultValue="demo@sharebari.com" />
-          <input className="field" placeholder="Phone" />
-          <input className="field" defaultValue="Khulna" />
-          <button className="button" type="submit">Save Profile</button>
-        </form>
+        {!user ? (
+          isUnauthorized ? (
+            <div className="panel empty-state">
+              <p>{message}</p>
+              <Link className="button" href="/login">Login</Link>
+            </div>
+          ) : (
+            <LoadingState label={message} />
+          )
+        ) : (
+          <form className="panel form-grid profile-form" onSubmit={handleSubmit}>
+            <label className="full avatar-upload-field">
+              <span>Profile image</span>
+              <div className="avatar-upload-row">
+                <span className="avatar profile-avatar-preview" aria-hidden="true">
+                  {avatarPreview ? <img src={avatarPreview} alt="" /> : user.name.slice(0, 1).toUpperCase()}
+                </span>
+                <input
+                  className="field"
+                  name="avatarFile"
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  onChange={(event) => {
+                    const file = event.currentTarget.files?.[0];
+                    setAvatarPreview(file ? URL.createObjectURL(file) : user.avatar || "");
+                  }}
+                />
+              </div>
+            </label>
+            <input className="field" name="name" defaultValue={user.name} placeholder="Name" required minLength={2} />
+            <input className="field" name="email" type="email" defaultValue={user.email} placeholder="Email" required />
+            <input className="field" name="phone" defaultValue={user.phone || ""} placeholder="Phone" />
+            <input className="field" name="location" defaultValue={user.location || ""} placeholder="Location" />
+            {message ? <p className="notice full">{message}</p> : null}
+            <button className="button" type="submit" disabled={isLoading}>{isLoading ? "Saving..." : "Save Profile"}</button>
+          </form>
+        )}
       </main>
       <SiteFooter />
     </div>

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { apiPost } from "@/lib/api";
 import { showError, showSuccess } from "@/lib/alerts";
+import { uploadAvatar } from "@/lib/upload";
 
 type Mode = "login" | "register";
 type AuthResponse = {
@@ -21,6 +22,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
   const router = useRouter();
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState("");
   const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
   async function finishAuth(payload?: AuthResponse) {
@@ -41,8 +43,13 @@ export function AuthForm({ mode }: { mode: Mode }) {
 
     const form = new FormData(event.currentTarget);
     const body = Object.fromEntries(form.entries());
+    const avatarFile = form.get("avatarFile");
+    delete body.avatarFile;
 
     try {
+      if (mode === "register" && avatarFile instanceof File && avatarFile.size > 0) {
+        body.avatar = await uploadAvatar(avatarFile);
+      }
       const payload = await apiPost<AuthResponse>(mode === "login" ? "/api/auth/login" : "/api/auth/register", body);
       await finishAuth(payload);
     } catch (error) {
@@ -108,6 +115,24 @@ export function AuthForm({ mode }: { mode: Mode }) {
             <label className="full">
               <span>Location</span>
               <input className="field" name="location" autoComplete="address-level2" />
+            </label>
+            <label className="full avatar-upload-field">
+              <span>Profile image</span>
+              <div className="avatar-upload-row">
+                <span className="avatar avatar-large" aria-hidden="true">
+                  {avatarPreview ? <img src={avatarPreview} alt="" /> : "SB"}
+                </span>
+                <input
+                  className="field"
+                  name="avatarFile"
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  onChange={(event) => {
+                    const file = event.currentTarget.files?.[0];
+                    setAvatarPreview(file ? URL.createObjectURL(file) : "");
+                  }}
+                />
+              </div>
             </label>
           </>
         ) : null}

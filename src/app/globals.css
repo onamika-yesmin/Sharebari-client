@@ -2771,6 +2771,29 @@ a:focus-visible {
   padding-bottom: 6px;
 }
 
+.avatar-upload-field {
+  display: grid;
+  gap: 8px;
+  color: var(--muted-strong);
+  font-weight: 700;
+}
+
+.avatar-upload-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.profile-avatar-preview {
+  width: 76px;
+  height: 76px;
+  font-size: 1.4rem;
+}
+
+.profile-form .button {
+  min-width: 180px;
+}
+
 @media (min-width: 1440px) {
   .page-title {
     padding-top: 70px;
@@ -2817,5 +2840,10 @@ a:focus-visible {
     border: 1px solid var(--line);
     border-radius: 8px;
     background: var(--surface);
+  }
+
+  .avatar-upload-row {
+    align-items: stretch;
+    flex-direction: column;
   }
 }
