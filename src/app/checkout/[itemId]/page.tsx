@@ -23,7 +23,7 @@ export default async function CheckoutPage({ params, searchParams }: { params: P
         <section className="page-title">
           <p className="eyebrow">Checkout</p>
           <h1>Review rental request.</h1>
-          <p className="lead">The backend will recalculate the trusted total before creating a Stripe Checkout Session.</p>
+          <p className="lead">Send a rental request first. After the owner accepts it, this page will show the Stripe payment button.</p>
         </section>
         <section className="details-grid">
           <img className="gallery-main" src={item.images[0]} alt={item.title} />

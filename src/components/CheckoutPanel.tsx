@@ -27,7 +27,7 @@ export function CheckoutPanel({ item, initialRentalDays }: { item: RentalItem; i
       });
       setCurrentRequest(match || null);
       if (match?.status === "accepted") {
-        setMessage("Owner accepted your request. You can pay now.");
+        setMessage("Owner accepted your request. Continue to Stripe Checkout to pay securely.");
       } else if (match?.status === "pending") {
         setMessage("Request already sent. Waiting for owner approval.");
       } else if (match?.status === "rejected") {
@@ -100,6 +100,7 @@ export function CheckoutPanel({ item, initialRentalDays }: { item: RentalItem; i
       <p>Rental amount: {formatMoney(rentalAmount)}</p>
       <p>Security deposit: {formatMoney(item.securityDeposit)}</p>
       <p className="price">Estimated total: {formatMoney(total)}</p>
+      <p className="payment-note">Payment is collected on Stripe Checkout after the owner accepts your rental request.</p>
       <label>
         Message to owner
         <textarea className="textarea" value={renterMessage} onChange={(event) => setRenterMessage(event.target.value)} placeholder="Pickup time, purpose, or questions" />
@@ -107,7 +108,7 @@ export function CheckoutPanel({ item, initialRentalDays }: { item: RentalItem; i
       {message ? <p className="notice">{message}</p> : null}
       <div className="action-row">
         {currentRequest?.status === "accepted" ? (
-          <button className="button" type="button" disabled={isPaying} onClick={handlePay}>{isPaying ? "Opening..." : "Pay with Stripe"}</button>
+          <button className="button" type="button" disabled={isPaying} onClick={handlePay}>{isPaying ? "Opening Stripe..." : "Pay on Stripe"}</button>
         ) : (
           <button className="button" type="submit" disabled={isLoading || currentRequest?.status === "pending" || currentRequest?.status === "paid"}>
             {isLoading ? "Sending..." : currentRequest?.status === "pending" ? "Waiting for Owner" : currentRequest?.status === "paid" ? "Already Paid" : "Send Rental Request"}
