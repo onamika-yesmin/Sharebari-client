@@ -1,10 +1,11 @@
+import Link from "next/link";
+import { ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react";
 import { ItemCard } from "@/components/ItemCard";
 import { PageHero } from "@/components/PageHero";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { getItems } from "@/lib/api";
 import { categories } from "@/lib/data";
-import { SlidersHorizontal } from "lucide-react";
 
 type ExploreSearch = {
   search?: string;
@@ -13,6 +14,7 @@ type ExploreSearch = {
   condition?: string;
   availability?: string;
   sort?: string;
+  page?: string;
 };
 
 export default async function ExplorePage({ searchParams }: { searchParams: Promise<ExploreSearch> }) {
@@ -22,6 +24,20 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
     if (value) query.set(key, value);
   });
   const { items, pagination, source } = await getItems(query.toString() ? `?${query.toString()}` : "");
+  const currentPage = Number(pagination.page) || 1;
+  const totalPages = Math.max(Number(pagination.totalPages) || 1, 1);
+  const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
+
+  function pageHref(page: number) {
+    const nextQuery = new URLSearchParams(query.toString());
+    if (page <= 1) {
+      nextQuery.delete("page");
+    } else {
+      nextQuery.set("page", String(page));
+    }
+    const queryString = nextQuery.toString();
+    return queryString ? `/explore?${queryString}` : "/explore";
+  }
 
   return (
     <div className="site-shell">
@@ -67,6 +83,44 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
         </div>
         <div className="section-head results-summary">
           <p>Showing {items.length} of {pagination.total} items. Page {pagination.page} of {pagination.totalPages}.</p>
+          {totalPages > 1 ? (
+            <nav className="pagination" aria-label="Explore pagination">
+              {currentPage > 1 ? (
+                <Link className="pagination-button" href={pageHref(currentPage - 1)} aria-label="Previous page">
+                  <ChevronLeft size={17} aria-hidden="true" />
+                  Previous
+                </Link>
+              ) : (
+                <span className="pagination-button disabled" aria-disabled="true">
+                  <ChevronLeft size={17} aria-hidden="true" />
+                  Previous
+                </span>
+              )}
+              <div className="pagination-pages" aria-label="Page numbers">
+                {pageNumbers.map((page) => (
+                  <Link
+                    className={page === currentPage ? "pagination-page active" : "pagination-page"}
+                    href={pageHref(page)}
+                    key={page}
+                    aria-current={page === currentPage ? "page" : undefined}
+                  >
+                    {page}
+                  </Link>
+                ))}
+              </div>
+              {currentPage < totalPages ? (
+                <Link className="pagination-button" href={pageHref(currentPage + 1)} aria-label="Next page">
+                  Next
+                  <ChevronRight size={17} aria-hidden="true" />
+                </Link>
+              ) : (
+                <span className="pagination-button disabled" aria-disabled="true">
+                  Next
+                  <ChevronRight size={17} aria-hidden="true" />
+                </span>
+              )}
+            </nav>
+          ) : null}
         </div>
       </main>
       <SiteFooter />
