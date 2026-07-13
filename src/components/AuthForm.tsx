@@ -102,6 +102,32 @@ export function AuthForm({ mode }: { mode: Mode }) {
 
       <div className="auth-divider"><span>or use email</span></div>
 
+      {mode === "login" ? (
+        <button
+          type="button"
+          className="button button-secondary full"
+          onClick={async () => {
+            try {
+              setIsLoading(true);
+              const payload = await apiPost<AuthResponse>("/api/auth/login", {
+                email: "demo@sharebari.com",
+                password: "DemoPassword123",
+              });
+              await finishAuth(payload);
+            } catch (error) {
+              const errorMessage = error instanceof Error ? error.message : "Demo login failed";
+              setMessage(errorMessage);
+              await showError("Demo login failed", errorMessage);
+            } finally {
+              setIsLoading(false);
+            }
+          }}
+          disabled={isLoading}
+        >
+          Try Demo Account
+        </button>
+      ) : null}
+
       <form className="form-grid auth-form" onSubmit={handleSubmit}>
         {mode === "register" ? (
           <>
