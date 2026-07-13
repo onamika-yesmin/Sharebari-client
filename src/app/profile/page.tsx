@@ -72,7 +72,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="site-shell">
+    <div className="site-shell py-10">
       <SiteHeader />
       <main className="container">
         <section className="page-title">
