@@ -40,7 +40,7 @@ export function SiteHeader() {
   const router = useRouter();
   const pathname = usePathname();
   const [user, setUser] = useState<CurrentUser | null>(null);
-  const [isCheckingSession, setIsCheckingSession] = useState(() => hasAuthMarker());
+  const [isCheckingSession, setIsCheckingSession] = useState(false);
 
   const initials = useMemo(() => user ? userInitials(user) : "", [user]);
 
@@ -51,6 +51,9 @@ export function SiteHeader() {
       return;
     }
 
+    Promise.resolve().then(() => {
+      if (isActive) setIsCheckingSession(true);
+    });
     getCurrentUser()
       .then((data) => {
         if (!isActive) return;

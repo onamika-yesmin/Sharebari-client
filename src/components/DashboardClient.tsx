@@ -20,11 +20,17 @@ export function DashboardClient() {
   const [adminSummary, setAdminSummary] = useState<AdminUsersSummary | null>(null);
   const [adminMessage, setAdminMessage] = useState("");
   const [updatingUserId, setUpdatingUserId] = useState("");
-  const [message, setMessage] = useState(() => hasAuthMarker() ? "Loading dashboard..." : "Please log in to view your dashboard.");
-  const [isUnauthorized, setIsUnauthorized] = useState(() => !hasAuthMarker());
+  const [message, setMessage] = useState("Loading dashboard...");
+  const [isUnauthorized, setIsUnauthorized] = useState(false);
 
   useEffect(() => {
-    if (!hasAuthMarker()) return;
+    if (!hasAuthMarker()) {
+      Promise.resolve().then(() => {
+        setIsUnauthorized(true);
+        setMessage("Please log in to view your dashboard.");
+      });
+      return;
+    }
 
     Promise.all([getDashboardStats(), getCurrentUser()])
       .then(([dashboardStats, currentUser]) => {
