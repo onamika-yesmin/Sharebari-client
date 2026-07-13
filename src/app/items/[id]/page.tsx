@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ItemCard } from "@/components/ItemCard";
+import { PageHero } from "@/components/PageHero";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { getItemById, getItems } from "@/lib/api";
@@ -22,11 +23,13 @@ export default async function ItemDetailsPage({ params }: { params: Promise<{ id
     <div className="site-shell">
       <SiteHeader />
       <main className="container">
-        <section className="page-title">
-          <p className="eyebrow">{categoryName(item.category)}</p>
-          <h1>{item.title}</h1>
-          <p className="lead">{item.shortDescription}</p>
-        </section>
+        <PageHero
+          eyebrow={categoryName(item.category)}
+          title={item.title}
+          lead={item.shortDescription}
+          image={item.images[0]}
+          imageAlt={item.title}
+        />
         <section className="details-grid">
           <div>
             <img className="gallery-main" src={item.images[0]} alt={item.title} />

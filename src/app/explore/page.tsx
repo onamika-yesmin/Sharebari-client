@@ -1,4 +1,5 @@
 import { ItemCard } from "@/components/ItemCard";
+import { PageHero } from "@/components/PageHero";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { getItems } from "@/lib/api";
@@ -25,12 +26,15 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
     <div className="site-shell">
       <SiteHeader />
       <main className="container">
-        <section className="page-title">
-          <p className="eyebrow">Explore</p>
-          <h1>Find rental items nearby.</h1>
-          <p className="lead">Search by title, description, or location, then filter by category, condition, and availability.</p>
+        <PageHero
+          eyebrow="Explore"
+          title="Find rental items nearby."
+          lead="Search by title, description, or location, then filter by category, condition, and availability."
+          image="https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=1400&q=80"
+          imageAlt="Useful items arranged for local rental"
+        >
           {source === "fallback" ? <p className="notice">Showing sample listings while the API is unavailable or empty.</p> : null}
-        </section>
+        </PageHero>
         <form className="filters">
           <input className="field" name="search" defaultValue={params.search} placeholder="Search items" />
           <select className="select" name="category" defaultValue={params.category ?? ""}>

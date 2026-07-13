@@ -16,6 +16,11 @@ export default async function Home() {
       <SiteHeader />
       <main className="home-main">
         <section className="home-hero">
+          {showcaseItem ? (
+            <div className="home-hero-bg" aria-hidden="true">
+              <img src={showcaseItem.images[0]} alt="" />
+            </div>
+          ) : null}
           <div className="container home-hero-grid">
             <div className="home-hero-copy">
               <p className="eyebrow">Bangladesh neighborhood rentals</p>

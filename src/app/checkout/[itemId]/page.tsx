@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { CheckoutPanel } from "@/components/CheckoutPanel";
+import { PageHero } from "@/components/PageHero";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { getItemById } from "@/lib/api";
@@ -20,11 +21,13 @@ export default async function CheckoutPage({ params, searchParams }: { params: P
     <div className="site-shell">
       <SiteHeader />
       <main className="container">
-        <section className="page-title">
-          <p className="eyebrow">Checkout</p>
-          <h1>Review rental request.</h1>
-          <p className="lead">Send a rental request first. After the owner accepts it, this page will show the Stripe payment button.</p>
-        </section>
+        <PageHero
+          eyebrow="Checkout"
+          title="Review rental request."
+          lead="Send a rental request first. After the owner accepts it, this page will show the Stripe payment button."
+          image={item.images[0]}
+          imageAlt={item.title}
+        />
         <section className="details-grid">
           <img className="gallery-main" src={item.images[0]} alt={item.title} />
           <CheckoutPanel item={item} initialRentalDays={initialRentalDays} />

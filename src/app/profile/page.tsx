@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
 import { LoadingState } from "@/components/LoadingState";
+import { PageHero } from "@/components/PageHero";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { showError, showSuccess } from "@/lib/alerts";
@@ -75,10 +76,13 @@ export default function ProfilePage() {
     <div className="site-shell ">
       <SiteHeader />
       <main className="container py-10">
-        <section className="page-title">
-          <p className="eyebrow">Protected</p>
-          <h1>Your profile.</h1>
-        </section>
+        <PageHero
+          eyebrow="Protected"
+          title="Your profile."
+          lead="Keep your name, contact details, location, and profile image ready for smooth rentals."
+          image="https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=1400&q=80"
+          imageAlt="Person updating a profile on a laptop"
+        />
         {!user ? (
           isUnauthorized ? (
             <div className="panel empty-state">

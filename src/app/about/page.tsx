@@ -1,3 +1,4 @@
+import { PageHero } from "@/components/PageHero";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 
@@ -6,11 +7,13 @@ export default function AboutPage() {
     <div className="site-shell">
       <SiteHeader />
       <main className="container">
-        <section className="page-title">
-          <p className="eyebrow">About</p>
-          <h1>Useful things should be easy to share.</h1>
-          <p className="lead">ShareBari is built for neighborhoods where people need practical items for short periods and owners want those items to earn value between uses.</p>
-        </section>
+        <PageHero
+          eyebrow="About"
+          title="Useful things should be easy to share."
+          lead="ShareBari is built for neighborhoods where people need practical items for short periods and owners want those items to earn value between uses."
+          image="https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1400&q=80"
+          imageAlt="Neighbors exchanging useful items"
+        />
         <section className="grid grid-3">
           <div className="card"><h3>Local first</h3><p>Search and filter around the places where renters can realistically pick up items.</p></div>
           <div className="card"><h3>Waste less</h3><p>Reduce duplicate purchases by keeping rarely used items in circulation.</p></div>

@@ -1,3 +1,4 @@
+import { PageHero } from "@/components/PageHero";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 
@@ -8,10 +9,13 @@ export default function HowItWorksPage() {
     <div className="site-shell">
       <SiteHeader />
       <main className="container">
-        <section className="page-title">
-          <p className="eyebrow">How It Works</p>
-          <h1>Rent locally in four simple steps.</h1>
-        </section>
+        <PageHero
+          eyebrow="How It Works"
+          title="Rent locally in four simple steps."
+          lead="Find the right item, confirm the details, pay securely, and return it on time."
+          image="https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?auto=format&fit=crop&w=1400&q=80"
+          imageAlt="People reviewing a rental agreement"
+        />
         <section className="grid grid-4">
           {steps.map((step, index) => (
             <div className="card" key={step}>

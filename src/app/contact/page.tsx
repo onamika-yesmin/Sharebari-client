@@ -1,5 +1,6 @@
 "use client";
 
+import { PageHero } from "@/components/PageHero";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { showError, showSuccess } from "@/lib/alerts";
@@ -10,11 +11,13 @@ export default function ContactPage() {
     <div className="site-shell">
       <SiteHeader />
       <main className="container">
-        <section className="page-title">
-          <p className="eyebrow">Contact</p>
-          <h1>Send a message.</h1>
-          <p className="lead">Questions about a rental, listing quality, or partnership can start here.</p>
-        </section>
+        <PageHero
+          eyebrow="Contact"
+          title="Send a message."
+          lead="Questions about a rental, listing quality, or partnership can start here."
+          image="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1400&q=80"
+          imageAlt="Person writing a support message on a laptop"
+        />
         <form
           className="panel form-grid"
           onSubmit={async (event) => {
