@@ -16,6 +16,18 @@ export type DashboardStats = {
   byAvailability?: Array<{ _id: string; count: number }>;
 };
 
+export type CurrentUser = {
+  _id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  location?: string;
+  authProvider?: "local" | "google";
+  role?: "user";
+  avatar?: string;
+  createdAt?: string;
+};
+
 export class ApiError extends Error {
   status: number;
 
@@ -147,11 +159,20 @@ export async function getDashboardStats(): Promise<DashboardStats> {
   return payload.data;
 }
 
+export async function getCurrentUser(): Promise<CurrentUser> {
+  const payload = await apiFetch<{ data: CurrentUser }>("/api/auth/me");
+  return payload.data;
+}
+
 export async function apiPost<T>(path: string, body: unknown) {
   return apiFetch<T>(path, {
     method: "POST",
     body: JSON.stringify(body),
   });
+}
+
+export async function logoutUser() {
+  return apiFetch<{ message?: string }>("/api/auth/logout", { method: "POST" });
 }
 
 export async function apiDelete<T>(path: string) {
