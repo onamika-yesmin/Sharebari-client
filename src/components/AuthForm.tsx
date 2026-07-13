@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { apiPost } from "@/lib/api";
+import { showError, showSuccess } from "@/lib/alerts";
 
 type Mode = "login" | "register";
 type AuthResponse = {
@@ -22,12 +23,13 @@ export function AuthForm({ mode }: { mode: Mode }) {
   const [isLoading, setIsLoading] = useState(false);
   const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
-  function finishAuth(payload?: AuthResponse) {
+  async function finishAuth(payload?: AuthResponse) {
     const token = payload?.token || payload?.accessToken || payload?.data?.token || payload?.data?.accessToken;
     if (token) {
       window.localStorage.setItem("sharebari_auth_token", token);
     }
     window.localStorage.setItem("sharebari_authenticated", "true");
+    await showSuccess(mode === "login" ? "Welcome back" : "Account created", "Your ShareBari workspace is ready.");
     router.push("/dashboard");
     router.refresh();
   }
@@ -42,9 +44,11 @@ export function AuthForm({ mode }: { mode: Mode }) {
 
     try {
       const payload = await apiPost<AuthResponse>(mode === "login" ? "/api/auth/login" : "/api/auth/register", body);
-      finishAuth(payload);
+      await finishAuth(payload);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Authentication failed");
+      const errorMessage = error instanceof Error ? error.message : "Authentication failed";
+      setMessage(errorMessage);
+      await showError("Authentication failed", errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -70,9 +74,11 @@ export function AuthForm({ mode }: { mode: Mode }) {
                 setMessage("");
                 setIsLoading(true);
                 const payload = await apiPost<AuthResponse>("/api/auth/google", { credential: credentialResponse.credential });
-                finishAuth(payload);
+                await finishAuth(payload);
               } catch (error) {
-                setMessage(error instanceof Error ? error.message : "Google login failed");
+                const errorMessage = error instanceof Error ? error.message : "Google login failed";
+                setMessage(errorMessage);
+                await showError("Google login failed", errorMessage);
               } finally {
                 setIsLoading(false);
               }

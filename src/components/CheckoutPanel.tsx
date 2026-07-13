@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { apiPost } from "@/lib/api";
+import { showError, showSuccess } from "@/lib/alerts";
 import { formatMoney, type RentalItem } from "@/lib/data";
 
 export function CheckoutPanel({ item }: { item: RentalItem }) {
@@ -23,12 +24,16 @@ export function CheckoutPanel({ item }: { item: RentalItem }) {
         rentalDays,
       });
       if (payload.data.checkoutUrl) {
+        await showSuccess("Checkout ready", "You will be redirected to Stripe Checkout.");
         window.location.href = payload.data.checkoutUrl;
         return;
       }
       setMessage("Stripe checkout URL was not returned.");
+      await showError("Checkout unavailable", "Stripe checkout URL was not returned.");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not start checkout");
+      const errorMessage = error instanceof Error ? error.message : "Could not start checkout";
+      setMessage(errorMessage);
+      await showError("Could not start checkout", errorMessage);
     } finally {
       setIsLoading(false);
     }

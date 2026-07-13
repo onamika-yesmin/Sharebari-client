@@ -1,5 +1,8 @@
+"use client";
+
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { showSuccess } from "@/lib/alerts";
 
 export default function ContactPage() {
   return (
@@ -11,7 +14,14 @@ export default function ContactPage() {
           <h1>Send a message.</h1>
           <p className="lead">Questions about a rental, listing quality, or partnership can start here.</p>
         </section>
-        <form className="panel form-grid">
+        <form
+          className="panel form-grid"
+          onSubmit={async (event) => {
+            event.preventDefault();
+            await showSuccess("Message received", "Thanks for contacting ShareBari. We will get back to you soon.");
+            event.currentTarget.reset();
+          }}
+        >
           <input className="field" placeholder="Name" />
           <input className="field" type="email" placeholder="Email" />
           <input className="field full" placeholder="Subject" />

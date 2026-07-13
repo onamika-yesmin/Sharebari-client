@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CreditCard, ShieldCheck, Star } from "lucide-react";
+import Image from "next/image";
 
 export function SiteFooter() {
   return (
@@ -7,9 +8,7 @@ export function SiteFooter() {
       <div className="container footer-grid">
         <div>
           <Link className="brand footer-brand" href="/">
-            <span className="logo-mark" aria-hidden="true">
-              <span>SB</span>
-            </span>
+            <Image className="site-logo-image" src="/sharebari-logo.svg" width={44} height={44} alt="" aria-hidden="true" />
             <span className="brand-copy">
               <strong>ShareBari</strong>
               <small>Borrow Nearby. Save More.</small>

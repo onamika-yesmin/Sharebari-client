@@ -2202,14 +2202,9 @@ a:focus-visible {
 
 /* Site-wide UI audit pass */
 .site-shell {
-  width: min(100%, var(--container));
-  max-width: var(--container);
   display: flex;
   min-height: 100vh;
   flex-direction: column;
-  margin: 0 auto;
-  overflow: hidden;
-  background: var(--background);
 }
 
 .site-shell > main {
@@ -2219,12 +2214,10 @@ a:focus-visible {
 
 .container,
 .auth-page {
-  width: 100%;
+  width: min(var(--container), calc(100% - 48px));
   max-width: var(--container);
   margin-right: auto;
   margin-left: auto;
-  padding-right: 24px;
-  padding-left: 24px;
 }
 
 .footer {
@@ -2416,9 +2409,7 @@ a:focus-visible {
 @media (max-width: 720px) {
   .container,
   .auth-page {
-    width: 100%;
-    padding-right: 12px;
-    padding-left: 12px;
+    width: min(100% - 24px, var(--container));
   }
 
   .hero,
@@ -2500,5 +2491,131 @@ a:focus-visible {
     right: 10px;
     bottom: 10px;
     max-width: calc(100% - 20px);
+  }
+}
+
+/* Final full-width polish pass */
+.site-shell {
+  width: 100%;
+  max-width: none;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  overflow-x: hidden;
+  background: var(--background);
+}
+
+.site-shell > main {
+  width: 100%;
+  flex: 1 0 auto;
+}
+
+.container,
+.auth-page {
+  width: 100%;
+  max-width: var(--container);
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 24px;
+  padding-left: 24px;
+}
+
+.footer {
+  margin-top: auto;
+}
+
+.header {
+  width: 100%;
+}
+
+.nav {
+  min-height: 82px;
+  border-right: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.nav-links {
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.nav-link {
+  gap: 7px;
+}
+
+.nav-link svg {
+  color: var(--accent);
+  flex: 0 0 auto;
+}
+
+.site-logo-image {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 14px;
+  box-shadow: 0 12px 28px rgba(17, 24, 39, 0.14);
+}
+
+.footer-brand .site-logo-image {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: white;
+}
+
+.button:disabled::before,
+.button-secondary:disabled::before,
+.button-ghost:disabled::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  margin-right: 8px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 999px;
+  animation: spin 800ms linear infinite;
+}
+
+.loading-state {
+  min-height: min(58vh, 560px);
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 12px;
+  color: var(--muted-strong);
+  font-weight: 700;
+}
+
+.loading-state svg {
+  color: var(--accent);
+  animation: spin 800ms linear infinite;
+}
+
+.sharebari-alert {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow-hover);
+}
+
+.sharebari-alert-button,
+.sharebari-alert-cancel {
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 720px) {
+  .container,
+  .auth-page {
+    width: 100%;
+    padding-right: 12px;
+    padding-left: 12px;
   }
 }

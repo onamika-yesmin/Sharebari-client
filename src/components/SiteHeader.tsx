@@ -1,18 +1,20 @@
 "use client";
 
-import { LayoutDashboard, LogOut, PackageSearch, Plus, UserRound } from "lucide-react";
+import { Compass, Grid3X3, Home, Info, LayoutDashboard, LogOut, PackageSearch, Phone, Plus, Route, UserRound } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { getCurrentUser, logoutUser, type CurrentUser } from "@/lib/api";
+import { showError, showSuccess } from "@/lib/alerts";
 
 const publicLinks = [
-  { href: "/", label: "Home" },
-  { href: "/explore", label: "Explore Items" },
-  { href: "/categories", label: "Categories" },
-  { href: "/how-it-works", label: "How It Works" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
+  { href: "/", label: "Home", icon: Home },
+  { href: "/explore", label: "Explore", icon: Compass },
+  { href: "/categories", label: "Categories", icon: Grid3X3 },
+  { href: "/how-it-works", label: "How It Works", icon: Route },
+  { href: "/about", label: "About", icon: Info },
+  { href: "/contact", label: "Contact", icon: Phone },
 ];
 
 function hasAuthMarker() {
@@ -73,8 +75,9 @@ export function SiteHeader() {
   async function handleLogout() {
     try {
       await logoutUser();
+      await showSuccess("Logged out", "You have been signed out from ShareBari.");
     } catch {
-      // Local cleanup still makes the UI correct if the API is unreachable.
+      await showError("Session closed locally", "The server did not respond, but your browser session was cleared.");
     } finally {
       window.localStorage.removeItem("sharebari_authenticated");
       window.localStorage.removeItem("sharebari_auth_token");
@@ -88,20 +91,22 @@ export function SiteHeader() {
     <header className="header">
       <nav className="container nav" aria-label="Main navigation">
         <Link className="brand" href="/">
-          <span className="logo-mark" aria-hidden="true">
-            <span>SB</span>
-          </span>
+          <Image className="site-logo-image" src="/sharebari-logo.svg" width={44} height={44} alt="" aria-hidden="true" priority />
           <span className="brand-copy">
             <strong>ShareBari</strong>
             <small>Borrow Nearby. Save More.</small>
           </span>
         </Link>
         <div className="nav-links">
-          {publicLinks.map((link) => (
-            <Link className={isActivePath(pathname, link.href) ? "nav-link active" : "nav-link"} href={link.href} key={link.href} aria-current={isActivePath(pathname, link.href) ? "page" : undefined}>
-              {link.label}
-            </Link>
-          ))}
+          {publicLinks.map((link) => {
+            const Icon = link.icon;
+            return (
+              <Link className={isActivePath(pathname, link.href) ? "nav-link active" : "nav-link"} href={link.href} key={link.href} aria-current={isActivePath(pathname, link.href) ? "page" : undefined}>
+                <Icon size={16} aria-hidden="true" />
+                {link.label}
+              </Link>
+            );
+          })}
           {user ? (
             <div className="account-nav" aria-label="Account navigation">
               <Link className="icon-button" href="/items/add" aria-label="Add item" title="Add item">

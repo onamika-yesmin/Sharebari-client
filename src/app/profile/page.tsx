@@ -1,5 +1,8 @@
+"use client";
+
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { showSuccess } from "@/lib/alerts";
 
 export default function ProfilePage() {
   return (
@@ -10,7 +13,13 @@ export default function ProfilePage() {
           <p className="eyebrow">Protected</p>
           <h1>Your profile.</h1>
         </section>
-        <form className="panel form-grid">
+        <form
+          className="panel form-grid"
+          onSubmit={async (event) => {
+            event.preventDefault();
+            await showSuccess("Profile saved", "Your profile changes are ready for backend connection.");
+          }}
+        >
           <input className="field" defaultValue="ShareBari Demo User" />
           <input className="field" defaultValue="demo@sharebari.com" />
           <input className="field" placeholder="Phone" />

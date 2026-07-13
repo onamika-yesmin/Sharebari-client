@@ -3,7 +3,9 @@
 import { Eye, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { LoadingState } from "@/components/LoadingState";
 import { apiDelete, getMyItems } from "@/lib/api";
+import { confirmAction, showError, showSuccess } from "@/lib/alerts";
 import { categoryName, formatMoney, type RentalItem } from "@/lib/data";
 
 export function ManageItemsClient() {
@@ -22,11 +24,17 @@ export function ManageItemsClient() {
 
   async function deleteItem(id?: string) {
     if (!id) return;
+    const confirmed = await confirmAction("Delete listing?", "This item will be removed from your owner workspace.", "Delete");
+    if (!confirmed) return;
+
     try {
       await apiDelete(`/api/items/${id}`);
+      await showSuccess("Listing deleted", "The item has been removed.");
       await loadItems();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not delete item");
+      const errorMessage = error instanceof Error ? error.message : "Could not delete item";
+      setMessage(errorMessage);
+      await showError("Could not delete item", errorMessage);
     }
   }
 
@@ -39,6 +47,10 @@ export function ManageItemsClient() {
   }, []);
 
   if (message && items.length === 0) {
+    if (message.toLowerCase().includes("loading")) {
+      return <LoadingState label={message} />;
+    }
+
     return (
       <div className="panel empty-state">
         <p>{message}</p>

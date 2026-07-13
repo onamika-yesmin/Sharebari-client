@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { apiPost } from "@/lib/api";
+import { showError, showSuccess } from "@/lib/alerts";
 import { categories } from "@/lib/data";
 
 export function AddItemForm() {
@@ -38,10 +39,13 @@ export function AddItemForm() {
 
     try {
       await apiPost("/api/items", body);
+      await showSuccess("Item saved", "Your rental listing has been added.");
       router.push("/items/manage");
       router.refresh();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not save item");
+      const errorMessage = error instanceof Error ? error.message : "Could not save item";
+      setMessage(errorMessage);
+      await showError("Could not save item", errorMessage);
     } finally {
       setIsLoading(false);
     }

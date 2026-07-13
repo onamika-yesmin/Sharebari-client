@@ -4,6 +4,7 @@ import { Boxes, CalendarClock, CircleDollarSign, Gauge, PackageCheck, ShieldChec
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { LoadingState } from "@/components/LoadingState";
 import { ApiError, getCurrentUser, getDashboardStats, type CurrentUser, type DashboardStats } from "@/lib/api";
 import { formatMoney } from "@/lib/data";
 
@@ -36,6 +37,10 @@ export function DashboardClient() {
   }, []);
 
   if (!stats) {
+    if (!isUnauthorized) {
+      return <LoadingState label={message || "Loading dashboard..."} />;
+    }
+
     return (
       <div className="panel empty-state">
         <p>{isUnauthorized ? "Please log in to view your dashboard." : message}</p>
