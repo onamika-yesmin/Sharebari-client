@@ -16,6 +16,8 @@ export type DashboardStats = {
   byAvailability?: Array<{ _id: string; count: number }>;
 };
 
+export type UserRole = "user" | "admin";
+
 export type CurrentUser = {
   _id: string;
   name: string;
@@ -23,9 +25,21 @@ export type CurrentUser = {
   phone?: string;
   location?: string;
   authProvider?: "local" | "google";
-  role?: string;
+  role?: UserRole | string;
   avatar?: string;
   createdAt?: string;
+};
+
+export type AdminUser = CurrentUser & {
+  listedItems: number;
+};
+
+export type AdminUsersSummary = {
+  totalUsers: number;
+  adminUsers: number;
+  regularUsers: number;
+  totalItems: number;
+  totalPayments: number;
 };
 
 export class ApiError extends Error {
@@ -169,9 +183,21 @@ export async function getCurrentUser(): Promise<CurrentUser> {
   return payload.data;
 }
 
+export async function getAdminUsers() {
+  const payload = await apiFetch<{ data: AdminUser[]; summary: AdminUsersSummary }>("/api/admin/users");
+  return payload;
+}
+
 export async function apiPost<T>(path: string, body: unknown) {
   return apiFetch<T>(path, {
     method: "POST",
+    body: JSON.stringify(body),
+  });
+}
+
+export async function apiPatch<T>(path: string, body: unknown) {
+  return apiFetch<T>(path, {
+    method: "PATCH",
     body: JSON.stringify(body),
   });
 }

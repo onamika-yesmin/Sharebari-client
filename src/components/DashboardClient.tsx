@@ -1,11 +1,12 @@
 "use client";
 
-import { Boxes, CalendarClock, CircleDollarSign, Gauge, PackageCheck, ShieldCheck, UserRound } from "lucide-react";
+import { Boxes, CalendarClock, CircleDollarSign, Crown, Gauge, PackageCheck, ShieldCheck, UserRound, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { LoadingState } from "@/components/LoadingState";
-import { ApiError, getCurrentUser, getDashboardStats, type CurrentUser, type DashboardStats } from "@/lib/api";
+import { showError, showSuccess } from "@/lib/alerts";
+import { ApiError, apiPatch, getAdminUsers, getCurrentUser, getDashboardStats, type AdminUser, type AdminUsersSummary, type CurrentUser, type DashboardStats, type UserRole } from "@/lib/api";
 import { formatMoney } from "@/lib/data";
 
 function hasAuthMarker() {
@@ -15,6 +16,10 @@ function hasAuthMarker() {
 export function DashboardClient() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [user, setUser] = useState<CurrentUser | null>(null);
+  const [adminUsers, setAdminUsers] = useState<AdminUser[]>([]);
+  const [adminSummary, setAdminSummary] = useState<AdminUsersSummary | null>(null);
+  const [adminMessage, setAdminMessage] = useState("");
+  const [updatingUserId, setUpdatingUserId] = useState("");
   const [message, setMessage] = useState(() => hasAuthMarker() ? "Loading dashboard..." : "Please log in to view your dashboard.");
   const [isUnauthorized, setIsUnauthorized] = useState(() => !hasAuthMarker());
 
@@ -26,6 +31,17 @@ export function DashboardClient() {
         setStats(dashboardStats);
         setUser(currentUser);
         setMessage("");
+        if (currentUser.role === "admin") {
+          getAdminUsers()
+            .then((payload) => {
+              setAdminUsers(payload.data);
+              setAdminSummary(payload.summary);
+              setAdminMessage("");
+            })
+            .catch((error) => {
+              setAdminMessage(error instanceof Error ? error.message : "Could not load users");
+            });
+        }
       })
       .catch((error) => {
         setIsUnauthorized(error instanceof ApiError && error.status === 401);
@@ -35,6 +51,32 @@ export function DashboardClient() {
         setMessage(error instanceof Error ? error.message : "Could not load dashboard");
       });
   }, []);
+
+  async function updateUserRole(userId: string, role: UserRole) {
+    setUpdatingUserId(userId);
+    setAdminMessage("");
+
+    try {
+      const payload = await apiPatch<{ data: CurrentUser }>(`/api/admin/users/${userId}/role`, { role });
+      setAdminUsers((users) => users.map((candidate) => candidate._id === userId ? { ...candidate, role: payload.data.role } : candidate));
+      setAdminSummary((summary) => {
+        if (!summary) return summary;
+        const updatedUsers = adminUsers.map((candidate) => candidate._id === userId ? { ...candidate, role } : candidate);
+        return {
+          ...summary,
+          adminUsers: updatedUsers.filter((candidate) => candidate.role === "admin").length,
+          regularUsers: updatedUsers.filter((candidate) => candidate.role !== "admin").length,
+        };
+      });
+      await showSuccess("User updated", "The account role has been changed.");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Could not update user";
+      setAdminMessage(errorMessage);
+      await showError("Could not update user", errorMessage);
+    } finally {
+      setUpdatingUserId("");
+    }
+  }
 
   if (!stats) {
     if (!isUnauthorized) {
@@ -53,15 +95,18 @@ export function DashboardClient() {
   const availabilityData = stats.byAvailability?.map((item) => ({ name: item._id, count: item.count })) || [];
   const roleLabel = stats.totalListedItems > 0 ? "Owner workspace" : "Renter workspace";
   const healthScore = stats.totalListedItems === 0 ? 0 : Math.round((stats.availableItems / stats.totalListedItems) * 100);
+  const isAdmin = user?.role === "admin";
 
   return (
     <>
       <section className="dashboard-hero panel">
         <div>
-          <p className="eyebrow">Role based workspace</p>
-          <h2>{roleLabel}</h2>
+          <p className="eyebrow">{isAdmin ? "Admin workspace" : "Role based workspace"}</p>
+          <h2>{isAdmin ? "Admin control room" : roleLabel}</h2>
           <p>
-            {stats.totalListedItems > 0
+            {isAdmin
+              ? "Manage users, review platform activity, and keep marketplace accounts organized from one place."
+              : stats.totalListedItems > 0
               ? "Manage your listed inventory, availability, pricing, and renter activity from one place."
               : "Browse rentals, start listing your first item, and build your owner dashboard as soon as you publish."}
           </p>
@@ -79,17 +124,70 @@ export function DashboardClient() {
       </section>
 
       <section className="dashboard-tabs" aria-label="Dashboard roles">
-        <span className="active"><Boxes size={16} aria-hidden="true" /> Owner</span>
+        {isAdmin ? <span className="active"><Crown size={16} aria-hidden="true" /> Admin</span> : null}
+        <span className={!isAdmin ? "active" : ""}><Boxes size={16} aria-hidden="true" /> Owner</span>
         <span><CalendarClock size={16} aria-hidden="true" /> Renter</span>
         <span><ShieldCheck size={16} aria-hidden="true" /> Profile</span>
       </section>
 
-      <section className="dashboard-stats">
-        <div className="panel stat-card"><PackageCheck size={20} aria-hidden="true" /><span>Total listed items</span><strong>{stats.totalListedItems}</strong></div>
-        <div className="panel stat-card"><Gauge size={20} aria-hidden="true" /><span>Available items</span><strong>{stats.availableItems}</strong><small>{healthScore}% ready</small></div>
-        <div className="panel stat-card"><Boxes size={20} aria-hidden="true" /><span>Rented items</span><strong>{stats.rentedItems}</strong></div>
-        <div className="panel stat-card"><CircleDollarSign size={20} aria-hidden="true" /><span>Average daily price</span><strong>{formatMoney(stats.averageDailyPrice)}</strong></div>
-      </section>
+      {isAdmin && adminSummary ? (
+        <section className="dashboard-stats">
+          <div className="panel stat-card"><UsersRound size={20} aria-hidden="true" /><span>Total users</span><strong>{adminSummary.totalUsers}</strong></div>
+          <div className="panel stat-card"><Crown size={20} aria-hidden="true" /><span>Admin users</span><strong>{adminSummary.adminUsers}</strong><small>{adminSummary.regularUsers} regular</small></div>
+          <div className="panel stat-card"><PackageCheck size={20} aria-hidden="true" /><span>Total listings</span><strong>{adminSummary.totalItems}</strong></div>
+          <div className="panel stat-card"><CircleDollarSign size={20} aria-hidden="true" /><span>Payment records</span><strong>{adminSummary.totalPayments}</strong></div>
+        </section>
+      ) : (
+        <section className="dashboard-stats">
+          <div className="panel stat-card"><PackageCheck size={20} aria-hidden="true" /><span>Total listed items</span><strong>{stats.totalListedItems}</strong></div>
+          <div className="panel stat-card"><Gauge size={20} aria-hidden="true" /><span>Available items</span><strong>{stats.availableItems}</strong><small>{healthScore}% ready</small></div>
+          <div className="panel stat-card"><Boxes size={20} aria-hidden="true" /><span>Rented items</span><strong>{stats.rentedItems}</strong></div>
+          <div className="panel stat-card"><CircleDollarSign size={20} aria-hidden="true" /><span>Average daily price</span><strong>{formatMoney(stats.averageDailyPrice)}</strong></div>
+        </section>
+      )}
+
+      {isAdmin ? (
+        <section className="panel admin-users-panel">
+          <div className="panel-title-row">
+            <div>
+              <p className="eyebrow">User management</p>
+              <h3>Marketplace accounts</h3>
+            </div>
+            <span className="badge">{adminUsers.length} users</span>
+          </div>
+          {adminMessage ? <p className="notice">{adminMessage}</p> : null}
+          <div className="admin-user-table" role="table" aria-label="Admin user management">
+            <div className="admin-user-row admin-user-head" role="row">
+              <span role="columnheader">User</span>
+              <span role="columnheader">Location</span>
+              <span role="columnheader">Listings</span>
+              <span role="columnheader">Role</span>
+            </div>
+            {adminUsers.map((account) => (
+              <div className="admin-user-row" role="row" key={account._id}>
+                <span role="cell">
+                  <strong>{account.name}</strong>
+                  <small>{account.email}</small>
+                </span>
+                <span role="cell">{account.location || "Not set"}</span>
+                <span role="cell">{account.listedItems}</span>
+                <span role="cell">
+                  <select
+                    className="select admin-role-select"
+                    value={account.role || "user"}
+                    disabled={updatingUserId === account._id}
+                    onChange={(event) => updateUserRole(account._id, event.target.value as UserRole)}
+                    aria-label={`Change role for ${account.name}`}
+                  >
+                    <option value="user">user</option>
+                    <option value="admin">admin</option>
+                  </select>
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section className="dashboard-grid">
         <div className="panel chart-panel">
