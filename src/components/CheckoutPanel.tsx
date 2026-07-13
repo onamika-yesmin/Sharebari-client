@@ -6,8 +6,9 @@ import { apiPost } from "@/lib/api";
 import { showError, showSuccess } from "@/lib/alerts";
 import { formatMoney, type RentalItem } from "@/lib/data";
 
-export function CheckoutPanel({ item }: { item: RentalItem }) {
-  const [rentalDays, setRentalDays] = useState(item.minimumRentalDays);
+export function CheckoutPanel({ item, initialRentalDays }: { item: RentalItem; initialRentalDays?: number }) {
+  const safeInitialRentalDays = Math.max(initialRentalDays || item.minimumRentalDays, item.minimumRentalDays);
+  const [rentalDays, setRentalDays] = useState(safeInitialRentalDays);
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const rentalAmount = item.dailyPrice * rentalDays;

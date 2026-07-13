@@ -9,6 +9,8 @@ import { showError, showSuccess } from "@/lib/alerts";
 import { ApiError, apiPatch, getAdminUsers, getCurrentUser, getDashboardStats, type AdminUser, type AdminUsersSummary, type CurrentUser, type DashboardStats, type UserRole } from "@/lib/api";
 import { formatMoney } from "@/lib/data";
 
+type DashboardTab = "admin" | "owner" | "renter" | "profile";
+
 function hasAuthMarker() {
   return typeof window !== "undefined" && window.localStorage.getItem("sharebari_authenticated") === "true";
 }
@@ -20,6 +22,7 @@ export function DashboardClient() {
   const [adminSummary, setAdminSummary] = useState<AdminUsersSummary | null>(null);
   const [adminMessage, setAdminMessage] = useState("");
   const [updatingUserId, setUpdatingUserId] = useState("");
+  const [activeTab, setActiveTab] = useState<DashboardTab>("owner");
   const [message, setMessage] = useState("Loading dashboard...");
   const [isUnauthorized, setIsUnauthorized] = useState(false);
 
@@ -38,6 +41,7 @@ export function DashboardClient() {
         setUser(currentUser);
         setMessage("");
         if (currentUser.role === "admin") {
+          setActiveTab("admin");
           getAdminUsers()
             .then((payload) => {
               setAdminUsers(payload.data);
@@ -130,13 +134,23 @@ export function DashboardClient() {
       </section>
 
       <section className="dashboard-tabs" aria-label="Dashboard roles">
-        {isAdmin ? <span className="active"><Crown size={16} aria-hidden="true" /> Admin</span> : null}
-        <span className={!isAdmin ? "active" : ""}><Boxes size={16} aria-hidden="true" /> Owner</span>
-        <span><CalendarClock size={16} aria-hidden="true" /> Renter</span>
-        <span><ShieldCheck size={16} aria-hidden="true" /> Profile</span>
+        {isAdmin ? (
+          <button className={activeTab === "admin" ? "active" : ""} type="button" onClick={() => setActiveTab("admin")}>
+            <Crown size={16} aria-hidden="true" /> Admin
+          </button>
+        ) : null}
+        <button className={activeTab === "owner" ? "active" : ""} type="button" onClick={() => setActiveTab("owner")}>
+          <Boxes size={16} aria-hidden="true" /> Owner
+        </button>
+        <button className={activeTab === "renter" ? "active" : ""} type="button" onClick={() => setActiveTab("renter")}>
+          <CalendarClock size={16} aria-hidden="true" /> Renter
+        </button>
+        <button className={activeTab === "profile" ? "active" : ""} type="button" onClick={() => setActiveTab("profile")}>
+          <ShieldCheck size={16} aria-hidden="true" /> Profile
+        </button>
       </section>
 
-      {isAdmin && adminSummary ? (
+      {activeTab === "admin" && isAdmin && adminSummary ? (
         <section className="dashboard-stats">
           <div className="panel stat-card"><UsersRound size={20} aria-hidden="true" /><span>Total users</span><strong>{adminSummary.totalUsers}</strong></div>
           <div className="panel stat-card"><Crown size={20} aria-hidden="true" /><span>Admin users</span><strong>{adminSummary.adminUsers}</strong><small>{adminSummary.regularUsers} regular</small></div>
@@ -152,7 +166,7 @@ export function DashboardClient() {
         </section>
       )}
 
-      {isAdmin ? (
+      {activeTab === "admin" && isAdmin ? (
         <section className="panel admin-users-panel">
           <div className="panel-title-row">
             <div>
@@ -195,56 +209,74 @@ export function DashboardClient() {
         </section>
       ) : null}
 
-      <section className="dashboard-grid">
-        <div className="panel chart-panel">
-          <div className="panel-title-row">
-            <h3>Items by category</h3>
-            <span className="badge">{categoryData.length || 0} groups</span>
+      {activeTab === "owner" ? (
+        <section className="dashboard-grid">
+          <div className="panel chart-panel">
+            <div className="panel-title-row">
+              <h3>Items by category</h3>
+              <span className="badge">{categoryData.length || 0} groups</span>
+            </div>
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={categoryData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Bar dataKey="count" fill="#2f6f5e" radius={[6, 6, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
-          <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={categoryData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-              <YAxis allowDecimals={false} />
-              <Tooltip />
-              <Bar dataKey="count" fill="#2f6f5e" radius={[6, 6, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-        <div className="panel chart-panel">
-          <div className="panel-title-row">
-            <h3>Availability distribution</h3>
-            <span className="badge badge-warm">Live</span>
+          <div className="panel chart-panel">
+            <div className="panel-title-row">
+              <h3>Availability distribution</h3>
+              <span className="badge badge-warm">Live</span>
+            </div>
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={availabilityData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Bar dataKey="count" fill="#8a623a" radius={[6, 6, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
-          <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={availabilityData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-              <YAxis allowDecimals={false} />
-              <Tooltip />
-              <Bar dataKey="count" fill="#8a623a" radius={[6, 6, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </section>
+        </section>
+      ) : null}
 
       <section className="dashboard-grid dashboard-grid-tight">
-        <div className="panel workspace-panel">
+        {activeTab === "owner" ? <div className="panel workspace-panel">
           <h3>Owner actions</h3>
           <p>Keep item data fresh so renters can trust price, condition, and pickup expectations.</p>
           <div className="action-row">
             <Link className="button" href="/items/add">Add item</Link>
             <Link className="button-ghost" href="/items/manage">Manage listings</Link>
           </div>
-        </div>
-        <div className="panel workspace-panel">
+        </div> : null}
+        {activeTab === "renter" ? <div className="panel workspace-panel">
           <h3>Renter actions</h3>
           <p>Search nearby options, compare deposits, and continue checkout when you find the right item.</p>
           <div className="action-row">
             <Link className="button-secondary" href="/explore">Explore rentals</Link>
             <Link className="button-ghost" href="/profile">Update profile</Link>
           </div>
-        </div>
+        </div> : null}
+        {activeTab === "profile" ? <div className="panel workspace-panel">
+          <h3>Profile settings</h3>
+          <p>Update your name, contact details, location, and profile image.</p>
+          <div className="action-row">
+            <Link className="button" href="/profile">Edit profile</Link>
+            <Link className="button-ghost" href="/items/manage">My listings</Link>
+          </div>
+        </div> : null}
+        {activeTab === "admin" && isAdmin ? <div className="panel workspace-panel">
+          <h3>Admin actions</h3>
+          <p>Use the role dropdowns above to promote admins or return accounts to regular user access.</p>
+          <div className="action-row">
+            <Link className="button" href="/items/manage">Review my listings</Link>
+            <Link className="button-ghost" href="/explore">Browse marketplace</Link>
+          </div>
+        </div> : null}
       </section>
     </>
   );

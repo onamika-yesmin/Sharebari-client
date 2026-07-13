@@ -2,7 +2,8 @@
 
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
-import { showSuccess } from "@/lib/alerts";
+import { showError, showSuccess } from "@/lib/alerts";
+import { apiPost } from "@/lib/api";
 
 export default function ContactPage() {
   return (
@@ -18,14 +19,20 @@ export default function ContactPage() {
           className="panel form-grid"
           onSubmit={async (event) => {
             event.preventDefault();
-            await showSuccess("Message received", "Thanks for contacting ShareBari. We will get back to you soon.");
-            event.currentTarget.reset();
+            const form = new FormData(event.currentTarget);
+            try {
+              await apiPost("/api/contact", Object.fromEntries(form.entries()));
+              await showSuccess("Message received", "Thanks for contacting ShareBari. We will get back to you soon.");
+              event.currentTarget.reset();
+            } catch (error) {
+              await showError("Could not send message", error instanceof Error ? error.message : "Please try again.");
+            }
           }}
         >
-          <input className="field" placeholder="Name" />
-          <input className="field" type="email" placeholder="Email" />
-          <input className="field full" placeholder="Subject" />
-          <textarea className="textarea full" placeholder="Message" />
+          <input className="field" name="name" placeholder="Name" required />
+          <input className="field" name="email" type="email" placeholder="Email" required />
+          <input className="field full" name="subject" placeholder="Subject" required />
+          <textarea className="textarea full" name="message" placeholder="Message" required />
           <button className="button" type="submit">Submit Message</button>
         </form>
       </main>

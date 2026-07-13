@@ -14,7 +14,7 @@ export default function AboutPage() {
         <section className="grid grid-3">
           <div className="card"><h3>Local first</h3><p>Search and filter around the places where renters can realistically pick up items.</p></div>
           <div className="card"><h3>Waste less</h3><p>Reduce duplicate purchases by keeping rarely used items in circulation.</p></div>
-          <div className="card"><h3>Assignment ready</h3><p>The app is structured for TypeScript, authentication, item management, dashboard stats, and Stripe checkout.</p></div>
+          <div className="card"><h3>Rental ready</h3><p>The app supports authentication, item management, dashboard stats, profile images, contact messages, and Stripe checkout.</p></div>
         </section>
       </main>
       <SiteFooter />

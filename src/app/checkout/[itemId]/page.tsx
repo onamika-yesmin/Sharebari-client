@@ -9,10 +9,12 @@ export function generateStaticParams() {
   return rentalItems.map((item) => ({ itemId: item.id }));
 }
 
-export default async function CheckoutPage({ params }: { params: Promise<{ itemId: string }> }) {
+export default async function CheckoutPage({ params, searchParams }: { params: Promise<{ itemId: string }>; searchParams: Promise<{ days?: string }> }) {
   const { itemId } = await params;
+  const { days } = await searchParams;
   const item = await getItemById(itemId);
   if (!item) notFound();
+  const initialRentalDays = Math.max(Number(days) || item.minimumRentalDays, item.minimumRentalDays);
 
   return (
     <div className="site-shell">
@@ -25,7 +27,7 @@ export default async function CheckoutPage({ params }: { params: Promise<{ itemI
         </section>
         <section className="details-grid">
           <img className="gallery-main" src={item.images[0]} alt={item.title} />
-          <CheckoutPanel item={item} />
+          <CheckoutPanel item={item} initialRentalDays={initialRentalDays} />
         </section>
       </main>
       <SiteFooter />
