@@ -69,7 +69,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
             shape="rectangular"
             size="large"
             text={mode === "login" ? "signin_with" : "signup_with"}
-            width="100%"
+            width="360"
           />
         </div>
       ) : null}
