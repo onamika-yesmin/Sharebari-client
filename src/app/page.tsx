@@ -17,11 +17,6 @@ export default async function Home() {
       <SiteHeader />
       <main className="home-main">
         <section className="home-hero">
-          {showcaseItem ? (
-            <div className="home-hero-bg" aria-hidden="true">
-              <img src={showcaseItem.images[0]} alt="" />
-            </div>
-          ) : null}
           <div className="container home-hero-grid">
             <div className="home-hero-copy">
               <p className="eyebrow">Bangladesh neighborhood rentals</p>
@@ -46,11 +41,17 @@ export default async function Home() {
                   <Link href={`/explore?location=${encodeURIComponent(location)}`} key={location}>{location}</Link>
                 ))}
               </div>
+              <div className="home-hero-stats" aria-label="Marketplace highlights">
+                <span><strong>{availableCount || "12+"}</strong> available now</span>
+                <span><strong>{locations.length || "5+"}</strong> pickup areas</span>
+                <span><strong>Stripe</strong> checkout ready</span>
+              </div>
             </div>
             {showcaseItem ? (
               <Link className="home-showcase" href={`/items/${showcaseItem.id}`} aria-label={`View ${showcaseItem.title}`}>
                 <img src={showcaseItem.images[0]} alt={showcaseItem.title} />
                 <div className="home-showcase-info">
+                  <span className="home-showcase-kicker">Featured nearby</span>
                   <span className="badge">{categoryName(showcaseItem.category)}</span>
                   <h2>{showcaseItem.title}</h2>
                   <p>{showcaseItem.location} · {showcaseItem.condition}</p>

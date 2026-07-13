@@ -3,6 +3,8 @@ import { CreditCard, ShieldCheck, Star } from "lucide-react";
 import Image from "next/image";
 
 export function SiteFooter() {
+  const year = new Date().getFullYear();
+
   return (
     <footer className="footer">
       <div className="container footer-grid">
@@ -38,6 +40,10 @@ export function SiteFooter() {
           <Link href="/privacy-policy">Privacy Policy</Link>
           <Link href="/terms">Terms</Link>
         </div>
+      </div>
+      <div className="container footer-bottom">
+        <p>&copy; {year} ShareBari. All rights reserved.</p>
+        <p>Built for neighborhood rentals in Bangladesh.</p>
       </div>
     </footer>
   );
