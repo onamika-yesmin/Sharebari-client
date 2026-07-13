@@ -57,7 +57,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
         <div className="grid grid-4">
           {items.map((item) => <ItemCard item={item} key={item.id} />)}
         </div>
-        <div className="section-head" style={{ marginTop: 24 }}>
+        <div className="section-head results-summary">
           <p>Showing {items.length} of {pagination.total} items. Page {pagination.page} of {pagination.totalPages}.</p>
         </div>
       </main>

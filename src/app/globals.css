@@ -23,6 +23,7 @@
   --ink: #111827;
   --shadow: 0 8px 24px rgba(17, 24, 39, 0.06);
   --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-card: 0 8px 24px rgba(17, 24, 39, 0.06);
   --shadow-hover: 0 14px 34px rgba(17, 24, 39, 0.1);
   --container: 1280px;
   --radius-sm: 6px;
@@ -2196,5 +2197,308 @@ a:focus-visible {
     border-left: 0;
     border-top: 1px solid var(--line);
     padding: 18px 0 0;
+  }
+}
+
+/* Site-wide UI audit pass */
+.site-shell {
+  width: min(100%, var(--container));
+  max-width: var(--container);
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  margin: 0 auto;
+  overflow: hidden;
+  background: var(--background);
+}
+
+.site-shell > main {
+  width: 100%;
+  flex: 1 0 auto;
+}
+
+.container,
+.auth-page {
+  width: 100%;
+  max-width: var(--container);
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 24px;
+  padding-left: 24px;
+}
+
+.footer {
+  margin-top: auto;
+}
+
+.nav {
+  min-width: 0;
+}
+
+.brand,
+.nav-links,
+.auth-nav,
+.account-nav {
+  min-width: 0;
+}
+
+.nav-links {
+  flex: 1 1 auto;
+}
+
+.button,
+.button-secondary,
+.button-ghost,
+.icon-button {
+  white-space: nowrap;
+}
+
+.button:disabled,
+.button-secondary:disabled,
+.button-ghost:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.hero-grid,
+.details-grid,
+.dashboard-grid,
+.grid {
+  min-width: 0;
+}
+
+.hero-copy,
+.search-panel,
+.panel,
+.card,
+.item-card,
+.category-card,
+.step-card,
+.auth-panel {
+  min-width: 0;
+}
+
+.page-title {
+  display: grid;
+  gap: 12px;
+}
+
+.page-title .lead,
+.page-title .notice,
+.page-title .button,
+.page-title .button-ghost {
+  margin-top: 4px;
+}
+
+.section-head.results-summary {
+  margin-top: 24px;
+  margin-bottom: 0;
+}
+
+.filters {
+  align-items: stretch;
+}
+
+.filters .button,
+.field-grid .button {
+  min-width: 92px;
+}
+
+.field,
+.select,
+.textarea {
+  min-width: 0;
+}
+
+.card,
+.category-card,
+.step-card,
+.workspace-panel,
+.checkout-card {
+  align-content: start;
+}
+
+.grid > .card,
+.grid > .category-card,
+.grid > .step-card,
+.dashboard-stats > .panel,
+.dashboard-grid > .panel {
+  min-height: 100%;
+}
+
+.item-body .button-ghost {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.meta-row span {
+  min-width: 0;
+}
+
+.gallery-main {
+  width: 100%;
+  min-height: 320px;
+}
+
+.details-grid aside {
+  position: sticky;
+  top: 96px;
+}
+
+.details-grid aside .button {
+  width: 100%;
+}
+
+.dashboard-hero {
+  overflow: hidden;
+}
+
+.dashboard-profile {
+  max-width: 100%;
+}
+
+.chart-panel {
+  overflow: hidden;
+}
+
+.recharts-wrapper,
+.recharts-surface {
+  max-width: 100%;
+}
+
+.manage-row {
+  overflow: hidden;
+}
+
+.footer-grid {
+  align-items: start;
+}
+
+.footer p {
+  max-width: 420px;
+}
+
+@media (max-width: 1180px) {
+  .nav {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 14px 0;
+  }
+
+  .nav-links {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 1080px) {
+  .hero-grid {
+    gap: 40px;
+  }
+
+  .grid-4 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 960px) {
+  .details-grid aside {
+    position: static;
+  }
+
+  .grid-4,
+  .grid-3,
+  .dashboard-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .container,
+  .auth-page {
+    width: 100%;
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .hero,
+  .section,
+  .section-soft,
+  .auth-page {
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+
+  .page-title {
+    padding-top: 40px;
+    padding-bottom: 24px;
+  }
+
+  .grid-4,
+  .grid-3,
+  .grid-2,
+  .dashboard-stats,
+  .dashboard-grid,
+  .form-grid,
+  .auth-proof-grid,
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filters {
+    grid-template-columns: 1fr;
+  }
+
+  .button,
+  .button-secondary,
+  .button-ghost {
+    min-width: 0;
+    white-space: normal;
+  }
+
+  .hero-actions .button,
+  .hero-actions .button-secondary,
+  .action-row .button,
+  .action-row .button-secondary,
+  .action-row .button-ghost {
+    flex: 1 1 100%;
+  }
+
+  .card,
+  .panel,
+  .category-card,
+  .step-card,
+  .auth-panel {
+    padding: 20px;
+  }
+
+  .gallery-main {
+    min-height: 240px;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-links a {
+    flex: 1 1 calc(50% - 8px);
+  }
+
+  .auth-nav .button,
+  .auth-nav .button-ghost,
+  .account-nav .icon-button {
+    flex: 1 1 auto;
+  }
+
+  .account-chip {
+    flex-basis: 100%;
+  }
+
+  .brand-copy small {
+    display: none;
+  }
+
+  .floating-proof {
+    right: 10px;
+    bottom: 10px;
+    max-width: calc(100% - 20px);
   }
 }
