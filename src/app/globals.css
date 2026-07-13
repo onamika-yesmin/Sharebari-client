@@ -2621,11 +2621,15 @@ a:focus-visible {
 }
 
 /* Wider app shell and cleaner header */
+.site-shell > main {
+  padding: 2.5rem 1.25rem;
+}
+
 .container,
 .auth-page {
   max-width: var(--container);
-  padding-right: clamp(20px, 3.2vw, 56px);
-  padding-left: clamp(20px, 3.2vw, 56px);
+  padding-right: 1.25rem;
+  padding-left: 1.25rem;
 }
 
 .header {
@@ -2815,8 +2819,8 @@ a:focus-visible {
 @media (max-width: 720px) {
   .container,
   .auth-page {
-    padding-right: 14px;
-    padding-left: 14px;
+    padding-right: 1.25rem;
+    padding-left: 1.25rem;
   }
 
   .nav {
