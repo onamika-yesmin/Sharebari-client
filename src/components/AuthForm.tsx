@@ -7,6 +7,14 @@ import { useState, type FormEvent } from "react";
 import { apiPost } from "@/lib/api";
 
 type Mode = "login" | "register";
+type AuthResponse = {
+  token?: string;
+  accessToken?: string;
+  data?: {
+    token?: string;
+    accessToken?: string;
+  };
+};
 
 export function AuthForm({ mode }: { mode: Mode }) {
   const router = useRouter();
@@ -14,7 +22,11 @@ export function AuthForm({ mode }: { mode: Mode }) {
   const [isLoading, setIsLoading] = useState(false);
   const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
-  function finishAuth() {
+  function finishAuth(payload?: AuthResponse) {
+    const token = payload?.token || payload?.accessToken || payload?.data?.token || payload?.data?.accessToken;
+    if (token) {
+      window.localStorage.setItem("sharebari_auth_token", token);
+    }
     window.localStorage.setItem("sharebari_authenticated", "true");
     router.push("/dashboard");
     router.refresh();
@@ -29,8 +41,8 @@ export function AuthForm({ mode }: { mode: Mode }) {
     const body = Object.fromEntries(form.entries());
 
     try {
-      await apiPost(mode === "login" ? "/api/auth/login" : "/api/auth/register", body);
-      finishAuth();
+      const payload = await apiPost<AuthResponse>(mode === "login" ? "/api/auth/login" : "/api/auth/register", body);
+      finishAuth(payload);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Authentication failed");
     } finally {
@@ -57,8 +69,8 @@ export function AuthForm({ mode }: { mode: Mode }) {
               try {
                 setMessage("");
                 setIsLoading(true);
-                await apiPost("/api/auth/google", { credential: credentialResponse.credential });
-                finishAuth();
+                const payload = await apiPost<AuthResponse>("/api/auth/google", { credential: credentialResponse.credential });
+                finishAuth(payload);
               } catch (error) {
                 setMessage(error instanceof Error ? error.message : "Google login failed");
               } finally {

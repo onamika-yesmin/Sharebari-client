@@ -27,9 +27,16 @@ export class ApiError extends Error {
 }
 
 export const apiBaseUrl =
-  process.env.NEXT_PUBLIC_API_BASE_URL ||
-  process.env.NEXT_PUBLIC_API_URL ||
-  "http://localhost:5000";
+  typeof window === "undefined"
+    ? process.env.NEXT_PUBLIC_API_BASE_URL ||
+      process.env.NEXT_PUBLIC_API_URL ||
+      "http://localhost:5000"
+    : "";
+
+function getStoredAuthToken() {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem("sharebari_auth_token");
+}
 
 function normalizeItem(item: Partial<RentalItem> & Record<string, unknown>): RentalItem {
   const owner = item.owner && typeof item.owner === "object" ? item.owner as RentalItem["owner"] : undefined;
@@ -63,17 +70,28 @@ function normalizeItem(item: Partial<RentalItem> & Record<string, unknown>): Ren
 }
 
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
+  const headers = new Headers(init?.headers);
+  if (!headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
+
+  const token = getStoredAuthToken();
+  if (token && !headers.has("Authorization")) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
   const response = await fetch(`${apiBaseUrl}${path}`, {
     ...init,
     credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      ...init?.headers,
-    },
+    headers,
   });
 
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
+    if (response.status === 401 && typeof window !== "undefined") {
+      window.localStorage.removeItem("sharebari_authenticated");
+      window.localStorage.removeItem("sharebari_auth_token");
+    }
     throw new ApiError(payload.message || "Request failed", response.status);
   }
 
