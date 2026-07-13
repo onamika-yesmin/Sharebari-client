@@ -1,8 +1,9 @@
 "use client";
 
+import { Eye, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { apiBaseUrl, apiDelete } from "@/lib/api";
+import { apiDelete, getMyItems } from "@/lib/api";
 import { categoryName, formatMoney, type RentalItem } from "@/lib/data";
 
 export function ManageItemsClient() {
@@ -11,10 +12,8 @@ export function ManageItemsClient() {
 
   async function loadItems() {
     try {
-      const response = await fetch(`${apiBaseUrl}/api/items/my-items`, { credentials: "include" });
-      const payload = await response.json();
-      if (!response.ok) throw new Error(payload.message || "Could not load listings");
-      setItems(payload.data.map((item: RentalItem & { _id?: string; slug?: string }) => ({ ...item, id: item.slug || item._id || item.id })));
+      const data = await getMyItems();
+      setItems(data);
       setMessage("");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not load listings");
@@ -40,22 +39,36 @@ export function ManageItemsClient() {
   }, []);
 
   if (message && items.length === 0) {
-    return <div className="panel empty-state">{message}</div>;
+    return (
+      <div className="panel empty-state">
+        <p>{message}</p>
+        <Link className="button" href="/items/add">Add first item</Link>
+      </div>
+    );
   }
 
   return (
-    <section className="grid">
+    <section className="manage-list">
       {message ? <p className="notice">{message}</p> : null}
       {items.map((item) => (
         <div className="panel manage-row" key={item.id}>
-          <img className="hero-photo" src={item.images[0]} alt={item.title} />
-          <div>
-            <h3>{item.title}</h3>
-            <p>{categoryName(item.category)} - {formatMoney(item.dailyPrice)} / day</p>
-            <p>Status: {item.availability}</p>
-            <div className="action-row">
-              <Link className="button-ghost" href={`/items/${item.id}`}>View</Link>
-              <button className="button-secondary" type="button" onClick={() => deleteItem(item._id)}>Delete</button>
+          <img className="manage-thumb" src={item.images[0]} alt={item.title} />
+          <div className="manage-content">
+            <div>
+              <div className="badge-row">
+                <span className="badge">{categoryName(item.category)}</span>
+                <span className="badge badge-warm">{item.availability}</span>
+              </div>
+              <h3>{item.title}</h3>
+              <p>{item.location} - {formatMoney(item.dailyPrice)} / day</p>
+            </div>
+            <div className="manage-actions">
+              <Link className="icon-button" href={`/items/${item.id}`} aria-label={`View ${item.title}`} title="View item">
+                <Eye size={18} aria-hidden="true" />
+              </Link>
+              <button className="icon-button danger" type="button" onClick={() => deleteItem(item._id)} aria-label={`Delete ${item.title}`} title="Delete item">
+                <Trash2 size={18} aria-hidden="true" />
+              </button>
             </div>
           </div>
         </div>

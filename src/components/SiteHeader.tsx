@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutDashboard, LogOut, Plus, UserRound } from "lucide-react";
+import { LayoutDashboard, LogOut, PackageSearch, Plus, UserRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -27,6 +27,11 @@ function userInitials(user: CurrentUser) {
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase())
     .join("") || "SU";
+}
+
+function isActivePath(pathname: string, href: string) {
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(`${href}/`);
 }
 
 export function SiteHeader() {
@@ -93,7 +98,7 @@ export function SiteHeader() {
         </Link>
         <div className="nav-links">
           {publicLinks.map((link) => (
-            <Link href={link.href} key={link.href}>
+            <Link className={isActivePath(pathname, link.href) ? "nav-link active" : "nav-link"} href={link.href} key={link.href} aria-current={isActivePath(pathname, link.href) ? "page" : undefined}>
               {link.label}
             </Link>
           ))}
@@ -113,6 +118,9 @@ export function SiteHeader() {
               </Link>
               <Link className="icon-button" href="/dashboard" aria-label="Dashboard" title="Dashboard">
                 <LayoutDashboard size={18} aria-hidden="true" />
+              </Link>
+              <Link className="icon-button" href="/items/manage" aria-label="Manage listings" title="Manage listings">
+                <PackageSearch size={18} aria-hidden="true" />
               </Link>
               <button className="icon-button" type="button" onClick={handleLogout} aria-label="Logout" title="Logout">
                 <LogOut size={18} aria-hidden="true" />

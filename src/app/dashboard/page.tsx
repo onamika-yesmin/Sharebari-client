@@ -8,9 +8,9 @@ export default function DashboardPage() {
       <SiteHeader />
       <main className="container">
         <section className="page-title">
-          <p className="eyebrow">Protected</p>
-          <h1>Dashboard.</h1>
-          <p className="lead">Track your own listings, availability, and pricing from live backend data.</p>
+          <p className="eyebrow">Protected workspace</p>
+          <h1>Your dashboard.</h1>
+          <p className="lead">A role-aware control room for renter activity, owner listings, availability, and pricing from live backend data.</p>
         </section>
         <DashboardClient />
       </main>

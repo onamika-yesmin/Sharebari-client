@@ -8,9 +8,9 @@ export default function ManageItemsPage() {
       <SiteHeader />
       <main className="container">
         <section className="page-title">
-          <p className="eyebrow">Protected</p>
+          <p className="eyebrow">Owner workspace</p>
           <h1>Manage your listings.</h1>
-          <p className="lead">Your account listings load directly from the backend.</p>
+          <p className="lead">Review availability, pricing, and listing quality for every item connected to your account.</p>
         </section>
         <ManageItemsClient />
       </main>

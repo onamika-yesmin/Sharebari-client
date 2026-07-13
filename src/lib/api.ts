@@ -23,7 +23,7 @@ export type CurrentUser = {
   phone?: string;
   location?: string;
   authProvider?: "local" | "google";
-  role?: "user";
+  role?: string;
   avatar?: string;
   createdAt?: string;
 };
@@ -157,6 +157,11 @@ export async function getItemById(id: string) {
 export async function getDashboardStats(): Promise<DashboardStats> {
   const payload = await apiFetch<{ data: DashboardStats }>("/api/dashboard/stats");
   return payload.data;
+}
+
+export async function getMyItems() {
+  const payload = await apiFetch<{ data: Array<Record<string, unknown>> }>("/api/items/my-items");
+  return payload.data.map(normalizeItem);
 }
 
 export async function getCurrentUser(): Promise<CurrentUser> {

@@ -8,9 +8,9 @@ export default function AddItemPage() {
       <SiteHeader />
       <main className="container">
         <section className="page-title">
-          <p className="eyebrow">Protected</p>
+          <p className="eyebrow">Owner workspace</p>
           <h1>Add a rental item.</h1>
-          <p className="lead">Owner, rating, and featured values are assigned by the server.</p>
+          <p className="lead">Create a clear listing with price, deposit, condition, and photos renters can trust.</p>
         </section>
         <AddItemForm />
       </main>
