@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { LoadingState } from "@/components/LoadingState";
 import { showError, showSuccess } from "@/lib/alerts";
-import { ApiError, apiPatch, getAdminUsers, getCurrentUser, getDashboardStats, type AdminUser, type AdminUsersSummary, type CurrentUser, type DashboardStats, type UserRole } from "@/lib/api";
+import { ApiError, apiPatch, createCheckoutSession, getAdminUsers, getCurrentUser, getDashboardStats, getMyRentalRequests, type AdminUser, type AdminUsersSummary, type CurrentUser, type DashboardStats, type RentalRequest, type UserRole } from "@/lib/api";
 import { formatMoney } from "@/lib/data";
 
 type DashboardTab = "admin" | "owner" | "renter" | "profile";
@@ -23,6 +23,8 @@ export function DashboardClient() {
   const [adminMessage, setAdminMessage] = useState("");
   const [updatingUserId, setUpdatingUserId] = useState("");
   const [activeTab, setActiveTab] = useState<DashboardTab>("owner");
+  const [rentalRequests, setRentalRequests] = useState<RentalRequest[]>([]);
+  const [payingRequestId, setPayingRequestId] = useState("");
   const [message, setMessage] = useState("Loading dashboard...");
   const [isUnauthorized, setIsUnauthorized] = useState(false);
 
@@ -35,10 +37,11 @@ export function DashboardClient() {
       return;
     }
 
-    Promise.all([getDashboardStats(), getCurrentUser()])
-      .then(([dashboardStats, currentUser]) => {
+    Promise.all([getDashboardStats(), getCurrentUser(), getMyRentalRequests()])
+      .then(([dashboardStats, currentUser, myRequests]) => {
         setStats(dashboardStats);
         setUser(currentUser);
+        setRentalRequests(myRequests);
         setMessage("");
         if (currentUser.role === "admin") {
           setActiveTab("admin");
@@ -85,6 +88,20 @@ export function DashboardClient() {
       await showError("Could not update user", errorMessage);
     } finally {
       setUpdatingUserId("");
+    }
+  }
+
+  async function payAcceptedRequest(requestId: string) {
+    setPayingRequestId(requestId);
+    try {
+      const payload = await createCheckoutSession({ requestId });
+      if (!payload.checkoutUrl) throw new Error("Stripe checkout URL was not returned");
+      await showSuccess("Checkout ready", "You will be redirected to Stripe Checkout.");
+      window.location.assign(payload.checkoutUrl);
+    } catch (error) {
+      await showError("Could not open checkout", error instanceof Error ? error.message : "Please try again.");
+    } finally {
+      setPayingRequestId("");
     }
   }
 
@@ -253,9 +270,33 @@ export function DashboardClient() {
             <Link className="button-ghost" href="/items/manage">Manage listings</Link>
           </div>
         </div> : null}
-        {activeTab === "renter" ? <div className="panel workspace-panel">
-          <h3>Renter actions</h3>
-          <p>Search nearby options, compare deposits, and continue checkout when you find the right item.</p>
+        {activeTab === "renter" ? <div className="panel workspace-panel rental-requests-panel">
+          <div className="panel-title-row">
+            <div>
+              <h3>My rental requests</h3>
+              <p>Owner approval appears here. Accepted requests can continue to payment.</p>
+            </div>
+            <span className="badge">{rentalRequests.length} requests</span>
+          </div>
+          {rentalRequests.length === 0 ? <p>No requests yet.</p> : (
+            <div className="request-list">
+              {rentalRequests.map((request) => (
+                <div className="request-row" key={request._id}>
+                  <div>
+                    <strong>{request.item?.title || "Rental item"}</strong>
+                    <p>{request.rentalDays} day(s) · {formatMoney(request.totalAmount)}</p>
+                    <small>Owner: {request.owner?.name || "ShareBari owner"}</small>
+                  </div>
+                  <span className="badge">{request.status}</span>
+                  {request.status === "accepted" ? (
+                    <button className="button" type="button" disabled={payingRequestId === request._id} onClick={() => payAcceptedRequest(request._id)}>
+                      {payingRequestId === request._id ? "Opening..." : "Pay"}
+                    </button>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+          )}
           <div className="action-row">
             <Link className="button-secondary" href="/explore">Explore rentals</Link>
             <Link className="button-ghost" href="/profile">Update profile</Link>

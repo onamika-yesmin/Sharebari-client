@@ -2799,6 +2799,37 @@ a:focus-visible {
   min-width: 180px;
 }
 
+.owner-requests-panel,
+.rental-requests-panel {
+  gap: 16px;
+}
+
+.request-list {
+  display: grid;
+  gap: 10px;
+}
+
+.request-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-raised);
+  padding: 14px;
+}
+
+.request-row p,
+.request-row small {
+  margin: 3px 0 0;
+  color: var(--muted);
+}
+
+.request-row small {
+  display: block;
+}
+
 .home-main {
   display: grid;
   gap: 0;
@@ -3052,6 +3083,11 @@ a:focus-visible {
   .avatar-upload-row {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .request-row {
+    grid-template-columns: 1fr;
+    align-items: start;
   }
 
   .home-search,

@@ -42,6 +42,32 @@ export type AdminUsersSummary = {
   totalPayments: number;
 };
 
+export type RentalRequestStatus = "pending" | "accepted" | "rejected" | "cancelled" | "paid";
+
+export type RentalRequest = {
+  _id: string;
+  item: {
+    _id?: string;
+    title?: string;
+    slug?: string;
+    images?: string[];
+    location?: string;
+    category?: string;
+    availability?: string;
+  };
+  renter?: CurrentUser;
+  owner?: CurrentUser;
+  rentalDays: number;
+  dailyPrice: number;
+  securityDeposit: number;
+  rentalAmount: number;
+  totalAmount: number;
+  status: RentalRequestStatus;
+  renterMessage?: string;
+  ownerNote?: string;
+  createdAt?: string;
+};
+
 export class ApiError extends Error {
   status: number;
 
@@ -186,6 +212,31 @@ export async function getCurrentUser(): Promise<CurrentUser> {
 export async function getAdminUsers() {
   const payload = await apiFetch<{ data: AdminUser[]; summary: AdminUsersSummary }>("/api/admin/users");
   return payload;
+}
+
+export async function createRentalRequest(body: { itemId: string; rentalDays: number; renterMessage?: string }) {
+  const payload = await apiPost<{ data: RentalRequest }>("/api/rental-requests", body);
+  return payload.data;
+}
+
+export async function getMyRentalRequests() {
+  const payload = await apiFetch<{ data: RentalRequest[] }>("/api/rental-requests/my");
+  return payload.data;
+}
+
+export async function getOwnerRentalRequests() {
+  const payload = await apiFetch<{ data: RentalRequest[] }>("/api/rental-requests/owner");
+  return payload.data;
+}
+
+export async function updateRentalRequestStatus(id: string, body: { status: "accepted" | "rejected"; ownerNote?: string }) {
+  const payload = await apiPatch<{ data: RentalRequest }>(`/api/rental-requests/${id}/status`, body);
+  return payload.data;
+}
+
+export async function createCheckoutSession(body: { itemId?: string; requestId?: string; rentalDays?: number }) {
+  const payload = await apiPost<{ data: { checkoutUrl: string | null } }>("/api/payments/create-checkout-session", body);
+  return payload.data;
 }
 
 export async function apiPost<T>(path: string, body: unknown) {

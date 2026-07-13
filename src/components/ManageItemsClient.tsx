@@ -1,24 +1,38 @@
 "use client";
 
-import { Eye, Trash2 } from "lucide-react";
+import { Check, Eye, Trash2, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LoadingState } from "@/components/LoadingState";
-import { apiDelete, getMyItems } from "@/lib/api";
+import { apiDelete, getMyItems, getOwnerRentalRequests, updateRentalRequestStatus, type RentalRequest } from "@/lib/api";
 import { confirmAction, showError, showSuccess } from "@/lib/alerts";
 import { categoryName, formatMoney, type RentalItem } from "@/lib/data";
 
 export function ManageItemsClient() {
   const [items, setItems] = useState<RentalItem[]>([]);
+  const [requests, setRequests] = useState<RentalRequest[]>([]);
   const [message, setMessage] = useState("Loading your listings...");
 
   async function loadItems() {
     try {
-      const data = await getMyItems();
+      const [data, ownerRequests] = await Promise.all([getMyItems(), getOwnerRentalRequests()]);
       setItems(data);
+      setRequests(ownerRequests);
       setMessage("");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not load listings");
+    }
+  }
+
+  async function updateRequest(id: string, status: "accepted" | "rejected") {
+    try {
+      await updateRentalRequestStatus(id, { status });
+      await showSuccess(status === "accepted" ? "Request accepted" : "Request rejected", status === "accepted" ? "The renter can now pay from their dashboard." : "The renter will see the rejected status.");
+      await loadItems();
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Could not update request";
+      setMessage(errorMessage);
+      await showError("Could not update request", errorMessage);
     }
   }
 
@@ -62,6 +76,41 @@ export function ManageItemsClient() {
   return (
     <section className="manage-list">
       {message ? <p className="notice">{message}</p> : null}
+      <div className="panel owner-requests-panel">
+        <div className="panel-title-row">
+          <div>
+            <p className="eyebrow">Rental requests</p>
+            <h3>Incoming renter requests</h3>
+          </div>
+          <span className="badge">{requests.length} requests</span>
+        </div>
+        {requests.length === 0 ? (
+          <p>No renter requests yet.</p>
+        ) : (
+          <div className="request-list">
+            {requests.map((request) => (
+              <div className="request-row" key={request._id}>
+                <div>
+                  <strong>{request.item?.title || "Rental item"}</strong>
+                  <p>{request.renter?.name || "Renter"} · {request.rentalDays} day(s) · {formatMoney(request.totalAmount)}</p>
+                  {request.renterMessage ? <small>{request.renterMessage}</small> : null}
+                </div>
+                <span className="badge">{request.status}</span>
+                {request.status === "pending" ? (
+                  <div className="manage-actions">
+                    <button className="icon-button" type="button" onClick={() => updateRequest(request._id, "accepted")} aria-label="Accept request" title="Accept request">
+                      <Check size={18} aria-hidden="true" />
+                    </button>
+                    <button className="icon-button danger" type="button" onClick={() => updateRequest(request._id, "rejected")} aria-label="Reject request" title="Reject request">
+                      <X size={18} aria-hidden="true" />
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
       {items.map((item) => (
         <div className="panel manage-row" key={item.id}>
           <img className="manage-thumb" src={item.images[0]} alt={item.title} />
