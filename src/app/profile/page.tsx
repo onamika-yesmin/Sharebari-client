@@ -72,9 +72,9 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="site-shell py-10">
+    <div className="site-shell ">
       <SiteHeader />
-      <main className="container">
+      <main className="container py-10">
         <section className="page-title">
           <p className="eyebrow">Protected</p>
           <h1>Your profile.</h1>
