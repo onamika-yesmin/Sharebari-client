@@ -10,11 +10,8 @@ export function SiteFooter() {
       <div className="container footer-grid">
         <div>
           <Link className="brand footer-brand" href="/">
-            <Image className="site-logo-image" src="/sharebari-logo.svg" width={44} height={44} alt="" aria-hidden="true" />
-            <span className="brand-copy">
-              <strong>ShareBari</strong>
-              <small>Borrow Nearby. Save More.</small>
-            </span>
+            <Image className="site-logo-image" src="/ShareBari Dark Green.png" width={44} height={44} alt="" aria-hidden="true" />
+            
           </Link>
           <p>Borrow useful items from nearby people and keep one-time purchases out of your budget.</p>
           <div className="footer-trust" aria-label="Marketplace trust signals">
