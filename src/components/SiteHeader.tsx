@@ -120,7 +120,7 @@ export function SiteHeader() {
     <header className="header">
       <nav className="container nav" aria-label="Main navigation">
         <Link className="brand" href="/">
-          <Image className="site-logo-image" src="/ShareBari Dark Green.png" width={44} height={44} alt="" aria-hidden="true" priority />
+          <Image className="site-logo-image" src="/ShareBari Dark Green.png" width={56} height={56} alt="ShareBari" priority />
         </Link>
 
         {/* Desktop links */}
