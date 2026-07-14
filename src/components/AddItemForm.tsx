@@ -1,16 +1,24 @@
 "use client";
 
-import { Save } from "lucide-react";
+import { ImagePlus, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { apiPost } from "@/lib/api";
 import { showError, showSuccess } from "@/lib/alerts";
 import { categories } from "@/lib/data";
+import { uploadItemImage } from "@/lib/upload";
+
+const imageUploadSlots = [
+  { name: "imageFile1", label: "Main image", required: true },
+  { name: "imageFile2", label: "Second image", required: false },
+  { name: "imageFile3", label: "Third image", required: false },
+];
 
 export function AddItemForm() {
   const router = useRouter();
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [imagePreviews, setImagePreviews] = useState<string[]>(() => imageUploadSlots.map(() => ""));
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -18,27 +26,32 @@ export function AddItemForm() {
     setIsLoading(true);
 
     const form = new FormData(event.currentTarget);
-    const images = [form.get("image1"), form.get("image2"), form.get("image3")]
-      .map((value) => String(value || "").trim())
-      .filter(Boolean);
-
-    const body = {
-      title: form.get("title"),
-      shortDescription: form.get("shortDescription"),
-      fullDescription: form.get("fullDescription"),
-      category: form.get("category"),
-      dailyPrice: form.get("dailyPrice"),
-      securityDeposit: form.get("securityDeposit"),
-      location: form.get("location"),
-      condition: form.get("condition"),
-      availability: form.get("availability"),
-      brand: form.get("brand"),
-      model: form.get("model"),
-      minimumRentalDays: form.get("minimumRentalDays"),
-      images,
-    };
+    const imageFiles = imageUploadSlots
+      .map((slot) => form.get(slot.name))
+      .filter((value): value is File => value instanceof File && value.size > 0);
 
     try {
+      if (imageFiles.length === 0) {
+        throw new Error("Please upload at least one item image.");
+      }
+
+      const images = await Promise.all(imageFiles.map((file) => uploadItemImage(file)));
+      const body = {
+        title: form.get("title"),
+        shortDescription: form.get("shortDescription"),
+        fullDescription: form.get("fullDescription"),
+        category: form.get("category"),
+        dailyPrice: form.get("dailyPrice"),
+        securityDeposit: form.get("securityDeposit"),
+        location: form.get("location"),
+        condition: form.get("condition"),
+        availability: form.get("availability"),
+        brand: form.get("brand"),
+        model: form.get("model"),
+        minimumRentalDays: form.get("minimumRentalDays"),
+        images,
+      };
+
       await apiPost("/api/items", body);
       await showSuccess("Item saved", "Your rental listing has been added.");
       router.push("/items/manage");
@@ -68,9 +81,31 @@ export function AddItemForm() {
       <input className="field" name="brand" placeholder="Brand" />
       <input className="field" name="model" placeholder="Model" />
       <input className="field" name="minimumRentalDays" type="number" placeholder="Minimum rental days" defaultValue={1} min={1} />
-      <input className="field full" name="image1" placeholder="Image URL 1" required type="url" />
-      <input className="field full" name="image2" placeholder="Image URL 2" type="url" />
-      <input className="field full" name="image3" placeholder="Image URL 3" type="url" />
+      <div className="item-image-upload-grid full">
+        {imageUploadSlots.map((slot, index) => (
+          <label className={`item-image-upload ${imagePreviews[index] ? "has-preview" : ""}`} key={slot.name}>
+            <input
+              name={slot.name}
+              type="file"
+              accept="image/png,image/jpeg,image/webp"
+              required={slot.required}
+              onChange={(event) => {
+                const file = event.currentTarget.files?.[0];
+                setImagePreviews((current) => current.map((preview, previewIndex) => (
+                  previewIndex === index ? file ? URL.createObjectURL(file) : "" : preview
+                )));
+              }}
+            />
+            <span className="item-image-preview" aria-hidden="true">
+              {imagePreviews[index] ? <img src={imagePreviews[index]} alt="" /> : <ImagePlus size={30} />}
+            </span>
+            <span className="item-image-copy">
+              <strong>{slot.label}</strong>
+              <small>{slot.required ? "Required" : "Optional"} PNG, JPG or WebP</small>
+            </span>
+          </label>
+        ))}
+      </div>
       {message ? <p className="notice full">{message}</p> : null}
       <button className="button" type="submit" disabled={isLoading}>
         <Save size={17} aria-hidden="true" />
