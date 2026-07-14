@@ -6,13 +6,25 @@ type PageHeroProps = {
   lead?: string;
   image: string;
   imageAlt: string;
+  variant?: string;
   actions?: ReactNode;
   children?: ReactNode;
 };
 
-export function PageHero({ eyebrow, title, lead, image, imageAlt, actions, children }: PageHeroProps) {
+function slugifyHeroVariant(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+export function PageHero({ eyebrow, title, lead, image, imageAlt, variant, actions, children }: PageHeroProps) {
+  const heroVariant = variant || slugifyHeroVariant(eyebrow);
+
   return (
-    <section className="page-hero">
+    <section className={`page-hero page-hero-${heroVariant}`}>
+      <span className="page-hero-float page-hero-float-one" aria-hidden="true" />
+      <span className="page-hero-float page-hero-float-two" aria-hidden="true" />
       <div className="page-hero-copy">
         <p className="eyebrow">{eyebrow}</p>
         <h1>{title}</h1>

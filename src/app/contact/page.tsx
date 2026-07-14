@@ -16,8 +16,8 @@ export default function ContactPage() {
           eyebrow="Contact"
           title="Send a message."
           lead="Questions about a rental, listing quality, or partnership can start here."
-          image="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1400&q=80"
-          imageAlt="Person writing a support message on a laptop"
+          image="https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=1400&q=80"
+          imageAlt="Speaker set from a local rental listing"
         />
         <form
           className="panel form-grid"

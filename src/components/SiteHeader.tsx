@@ -42,6 +42,7 @@ export function SiteHeader() {
   const [user, setUser] = useState<CurrentUser | null>(null);
   const [isCheckingSession, setIsCheckingSession] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const initials = useMemo(() => (user ? userInitials(user) : ""), [user]);
 
@@ -75,6 +76,19 @@ export function SiteHeader() {
       isActive = false;
     };
   }, [pathname]);
+
+  useEffect(() => {
+    function handleScroll() {
+      setIsScrolled(window.scrollY > 8);
+    }
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   // Close the off-canvas menu whenever the route changes.
   useEffect(() => {
@@ -117,7 +131,7 @@ export function SiteHeader() {
   }
 
   return (
-    <header className="header">
+    <header className={isScrolled ? "header is-scrolled" : "header"}>
       <nav className="container nav" aria-label="Main navigation">
         <Link className="site-logo-link header-logo-link" href="/" aria-label="ShareBari home">
           <Image className="site-logo-wordmark header-logo-wordmark" src="/ShareBari Dark Green.png" width={150} height={78} alt="ShareBari" priority />

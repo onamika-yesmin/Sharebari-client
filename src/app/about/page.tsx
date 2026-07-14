@@ -11,8 +11,8 @@ export default function AboutPage() {
           eyebrow="About"
           title="Useful things should be easy to share."
           lead="ShareBari is built for neighborhoods where people need practical items for short periods and owners want those items to earn value between uses."
-          image="https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1400&q=80"
-          imageAlt="Neighbors exchanging useful items"
+          image="https://images.unsplash.com/photo-1594385208974-2e75f8d7bb48?auto=format&fit=crop&w=1400&q=80"
+          imageAlt="Kitchen mixer ready to be shared locally"
         />
         <section className="grid grid-3">
           <div className="card"><h3>Local first</h3><p>Search and filter around the places where renters can realistically pick up items.</p></div>

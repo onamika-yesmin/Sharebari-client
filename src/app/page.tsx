@@ -62,7 +62,7 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="home-category-rail">
+        <section className="home-category-rail scroll-reveal">
           <div className="container">
             <div className="home-rail-head">
               <h2>Browse by need</h2>
@@ -82,7 +82,7 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="section">
+        <section className="section scroll-reveal">
           <div className="container">
             <div className="section-head">
               <div>
@@ -106,7 +106,7 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="home-owner-band">
+        <section className="home-owner-band scroll-reveal">
           <div className="container home-owner-grid">
             <div>
               <p className="eyebrow">For owners</p>
@@ -126,22 +126,22 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="section">
+        <section className="section scroll-reveal">
           <div className="container grid grid-2">
             <div>
               <h2>Why rent instead of buy?</h2>
               <p className="lead">Lower your cost, reduce storage clutter, and keep useful items circulating in the community.</p>
             </div>
-            <div className="grid grid-2">
-              <div className="panel stat"><strong>72%</strong><span>estimated savings on one-time needs</span></div>
-              <div className="panel stat"><strong>{availableCount}</strong><span>available listings shown</span></div>
-              <div className="panel stat"><strong>6</strong><span>major rental categories</span></div>
-              <div className="panel stat"><strong>4.6</strong><span>average item rating</span></div>
+            <div className="grid grid-2 rent-stats">
+              <div className="panel stat rent-stat-card"><strong className="count-up" data-count="72" data-suffix="%">72%</strong><span>estimated savings on one-time needs</span></div>
+              <div className="panel stat rent-stat-card"><strong className="count-up" data-count={availableCount}>{availableCount}</strong><span>available listings shown</span></div>
+              <div className="panel stat rent-stat-card"><strong className="count-up" data-count="6">6</strong><span>major rental categories</span></div>
+              <div className="panel stat rent-stat-card"><strong className="count-up" data-count="4.6" data-decimals="1">4.6</strong><span>average item rating</span></div>
             </div>
           </div>
         </section>
 
-        <section className="section-soft">
+        <section className="section-soft scroll-reveal">
           <div className="container">
             <div className="section-head">
               <div>
@@ -159,7 +159,7 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="section">
+        <section className="section scroll-reveal">
           <div className="container grid grid-3">
             <div className="card"><h3>Renter friendly</h3><p>Clear daily prices, deposits, condition labels, and owner details after login.</p></div>
             <div className="card"><h3>Owner controlled</h3><p>Owners can list items, manage availability, and delete their own listings.</p></div>
@@ -167,7 +167,7 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="section-soft">
+        <section className="section-soft scroll-reveal">
           <div className="container section-head">
             <div>
               <h2>Questions before renting?</h2>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Boxes, CalendarClock, CircleDollarSign, Compass, CreditCard, Crown, Gauge, LogIn, PackageCheck, PackageSearch, Pencil, Plus, ShieldCheck, UserRound, UsersRound } from "lucide-react";
+import { Boxes, CalendarClock, ChevronDown, CircleDollarSign, Compass, CreditCard, Crown, Gauge, LogIn, PackageCheck, PackageSearch, Pencil, Plus, ShieldCheck, UserRound, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
@@ -214,16 +214,19 @@ export function DashboardClient() {
                 <span role="cell">{account.location || "Not set"}</span>
                 <span role="cell">{account.listedItems}</span>
                 <span role="cell">
-                  <select
-                    className="select admin-role-select"
-                    value={account.role || "user"}
-                    disabled={updatingUserId === account._id}
-                    onChange={(event) => updateUserRole(account._id, event.target.value as UserRole)}
-                    aria-label={`Change role for ${account.name}`}
-                  >
-                    <option value="user">user</option>
-                    <option value="admin">admin</option>
-                  </select>
+                  <span className="admin-role-select-wrap">
+                    <select
+                      className="admin-role-select"
+                      value={account.role || "user"}
+                      disabled={updatingUserId === account._id}
+                      onChange={(event) => updateUserRole(account._id, event.target.value as UserRole)}
+                      aria-label={`Change role for ${account.name}`}
+                    >
+                      <option value="user">user</option>
+                      <option value="admin">admin</option>
+                    </select>
+                    <ChevronDown size={16} aria-hidden="true" />
+                  </span>
                 </span>
               </div>
             ))}

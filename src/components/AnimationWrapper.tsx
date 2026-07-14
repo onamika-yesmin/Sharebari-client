@@ -4,7 +4,8 @@ import { useEffect } from "react";
 import {
   animateCardsOnScroll,
   animateImageZoom,
-  hoverScaleAnimation,
+  animateButtonClick,
+  animateNumberCounters,
   fadeInOnScroll,
   staggerInAnimation,
 } from "@/lib/gsap-animations";
@@ -15,17 +16,15 @@ export function AnimationWrapper({ children }: { children: React.ReactNode }) {
     animateCardsOnScroll(".item-card");
     animateCardsOnScroll(".category-card");
     animateCardsOnScroll(".step-card");
+    animateCardsOnScroll(".scroll-reveal");
 
     animateImageZoom(".hero-photo");
-    animateImageZoom(".item-card img");
     animateImageZoom(".gallery-main");
-
-    hoverScaleAnimation(".item-card", 1.03);
-    hoverScaleAnimation(".category-card", 1.02);
-    hoverScaleAnimation(".button", 1.02);
 
     fadeInOnScroll(".panel");
     fadeInOnScroll(".search-panel");
+    animateNumberCounters(".count-up");
+    animateButtonClick(".button, .button-secondary, .button-ghost");
 
     const heroElements = document.querySelectorAll(
       ".home-hero-copy > *:not(.home-search):not(.home-quick-links)"

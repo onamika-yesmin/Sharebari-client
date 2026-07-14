@@ -5,10 +5,13 @@ import { categoryName, formatMoney, type RentalItem } from "@/lib/data";
 export function ItemCard({ item }: { item: RentalItem }) {
   return (
     <article className="item-card">
-      <img src={item.images[0]} alt={item.title} />
+      <div className="item-media">
+        <img src={item.images[0]} alt={item.title} />
+        <span className="item-category-badge">{categoryName(item.category)}</span>
+        <span className="item-price-badge">{formatMoney(item.dailyPrice)} / day</span>
+      </div>
       <div className="item-body">
         <div className="badge-row">
-          <span className="badge">{categoryName(item.category)}</span>
           <span className="badge badge-warm">{item.availability}</span>
         </div>
         <h3>{item.title}</h3>
@@ -18,7 +21,6 @@ export function ItemCard({ item }: { item: RentalItem }) {
           <span>{item.condition}</span>
           <span className="rating-pill"><Star size={14} aria-hidden="true" /> {item.rating.toFixed(1)}</span>
         </div>
-        <div className="price">{formatMoney(item.dailyPrice)} / day</div>
         <Link className="button-ghost" href={`/items/${item.id}`}>
           <Eye size={17} aria-hidden="true" />
           View Details

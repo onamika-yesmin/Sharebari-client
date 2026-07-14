@@ -21,12 +21,15 @@ export const animateCardsOnScroll = (selector: string) => {
       scrollTrigger: {
         trigger: card,
         start: "top 80%",
-        toggleActions: "play none none reverse",
+        once: true,
       },
       duration: 0.6,
       opacity: 0,
       y: 20,
       ease: "power2.out",
+      onComplete: () => {
+        gsap.set(card, { clearProps: "transform" });
+      },
     });
   });
 };
@@ -64,6 +67,9 @@ export const animateImageZoom = (selector: string) => {
       scale: 0.95,
       opacity: 0,
       ease: "power2.out",
+      onComplete: () => {
+        gsap.set(img, { clearProps: "transform" });
+      },
     });
   });
 };
@@ -166,11 +172,50 @@ export const fadeInOnScroll = (selector: string) => {
       scrollTrigger: {
         trigger: element,
         start: "top 85%",
-        toggleActions: "play none none reverse",
+        once: true,
       },
       duration: 0.8,
       opacity: 0,
       ease: "power2.out",
+    });
+  });
+};
+
+export const animateNumberCounters = (selector = ".count-up") => {
+  const counters = document.querySelectorAll<HTMLElement>(selector);
+
+  counters.forEach((counter) => {
+    const end = Number(counter.dataset.count);
+    if (!Number.isFinite(end)) return;
+
+    const decimals = Number(counter.dataset.decimals || 0);
+    const prefix = counter.dataset.prefix || "";
+    const suffix = counter.dataset.suffix || "";
+    const formatValue = (value: number) =>
+      `${prefix}${value.toLocaleString("en-US", {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+      })}${suffix}`;
+
+    const state = { value: 0 };
+    gsap.to(state, {
+      scrollTrigger: {
+        trigger: counter,
+        start: "top 85%",
+        once: true,
+      },
+      value: end,
+      duration: 1.4,
+      ease: "power2.out",
+      onStart: () => {
+        counter.textContent = formatValue(0);
+      },
+      onUpdate: () => {
+        counter.textContent = formatValue(state.value);
+      },
+      onComplete: () => {
+        counter.textContent = formatValue(end);
+      },
     });
   });
 };

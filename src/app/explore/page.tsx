@@ -47,8 +47,8 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
           eyebrow="Explore"
           title="Find rental items nearby."
           lead="Search by title, description, or location, then filter by category, condition, and availability."
-          image="https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=1400&q=80"
-          imageAlt="Useful items arranged for local rental"
+          image="https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=1400&q=80"
+          imageAlt="Cordless drill kit ready for a local rental"
         >
           {source === "fallback" ? <p className="notice">Showing sample listings while the API is unavailable or empty.</p> : null}
         </PageHero>

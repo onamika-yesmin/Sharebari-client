@@ -13,8 +13,8 @@ export default function HowItWorksPage() {
           eyebrow="How It Works"
           title="Rent locally in four simple steps."
           lead="Find the right item, confirm the details, pay securely, and return it on time."
-          image="https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?auto=format&fit=crop&w=1400&q=80"
-          imageAlt="People reviewing a rental agreement"
+          image="https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?auto=format&fit=crop&w=1400&q=80"
+          imageAlt="Projector available for a short local rental"
         />
         <section className="grid grid-4">
           {steps.map((step, index) => (
