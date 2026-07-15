@@ -11,7 +11,7 @@
 
 .eyebrow {
   margin: 0 0 12px;
-  color: #0f766e;
+  color: #2d1400;
   font-size: 0.875rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -26,12 +26,12 @@
 
 .copy {
   margin: 24px 0 0;
-  color: #525252;
+  color: #8f7968;
   font-size: 1.125rem;
   line-height: 1.6;
 }
 
 .copy code {
-  color: #111827;
+  color: #2d1400;
   font-weight: 700;
 }

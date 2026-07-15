@@ -4,25 +4,25 @@ const config = {
   theme: {
     extend: {
       colors: {
-        background: "#F8F9FA",
+        background: "#CCB9AA",
         surface: "#FFFFFF",
-        elevated: "#FCFCFD",
-        foreground: "#18181B",
-        muted: "#71717A",
-        border: "rgba(24, 24, 27, 0.08)",
+        elevated: "#FFFFFF",
+        foreground: "#2D1400",
+        muted: "#8F7968",
+        border: "rgba(45, 20, 0, 0.16)",
         navy: {
-          900: "#111827",
-          800: "#1F2937",
-          700: "#374151",
+          900: "#2D1400",
+          800: "#2D1400",
+          700: "#8F7968",
         },
         emerald: {
-          700: "#2F6F5E",
-          600: "#3F7F6D",
-          100: "#E9F3EF",
+          700: "#2D1400",
+          600: "#8F7968",
+          100: "#CCB9AA",
         },
         amber: {
-          700: "#8A623A",
-          100: "#F6EFE5",
+          700: "#8F7968",
+          100: "#CCB9AA",
         },
       },
       spacing: {
@@ -37,9 +37,9 @@ const config = {
         lg: "12px",
       },
       boxShadow: {
-        subtle: "0 1px 3px rgba(0, 0, 0, 0.08)",
-        card: "0 8px 24px rgba(17, 24, 39, 0.06)",
-        hover: "0 14px 34px rgba(17, 24, 39, 0.10)",
+        subtle: "0 1px 3px rgba(45, 20, 0, 0.08)",
+        card: "0 8px 24px rgba(45, 20, 0, 0.10)",
+        hover: "0 14px 34px rgba(45, 20, 0, 0.16)",
       },
       fontFamily: {
         sans: ["Inter", "Geist", "Söhne", "Segoe UI", "Roboto", "Arial", "sans-serif"],
