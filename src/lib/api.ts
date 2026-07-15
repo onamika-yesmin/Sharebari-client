@@ -78,6 +78,14 @@ export class ApiError extends Error {
   }
 }
 
+type ErrorPayload = {
+  message?: string;
+  issues?: Array<{
+    path?: Array<string | number>;
+    message?: string;
+  }>;
+};
+
 export const apiBaseUrl =
   typeof window === "undefined"
     ? process.env.NEXT_PUBLIC_API_BASE_URL ||
@@ -88,6 +96,20 @@ export const apiBaseUrl =
 function getStoredAuthToken() {
   if (typeof window === "undefined") return null;
   return window.localStorage.getItem("sharebari_auth_token");
+}
+
+function getErrorMessage(payload: ErrorPayload) {
+  if (payload.message) return payload.message;
+  if (Array.isArray(payload.issues) && payload.issues.length > 0) {
+    return payload.issues
+      .map((issue) => {
+        const field = issue.path && issue.path.length > 0 ? issue.path.join(".") : "request";
+        return `${field}: ${issue.message || "Invalid value"}`;
+      })
+      .join("; ");
+  }
+
+  return "Request failed";
 }
 
 function normalizeItem(item: Partial<RentalItem> & Record<string, unknown>): RentalItem {
@@ -144,7 +166,7 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
       window.localStorage.removeItem("sharebari_authenticated");
       window.localStorage.removeItem("sharebari_auth_token");
     }
-    throw new ApiError(payload.message || "Request failed", response.status);
+    throw new ApiError(getErrorMessage(payload as ErrorPayload), response.status);
   }
 
   return payload as T;

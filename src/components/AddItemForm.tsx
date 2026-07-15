@@ -14,6 +14,10 @@ const imageUploadSlots = [
   { name: "imageFile3", label: "Third image", required: false },
 ];
 
+function textValue(form: FormData, name: string) {
+  return String(form.get(name) || "").trim();
+}
+
 export function AddItemForm() {
   const router = useRouter();
   const [message, setMessage] = useState("");
@@ -35,20 +39,26 @@ export function AddItemForm() {
         throw new Error("Please upload at least one item image.");
       }
 
-      const images = await Promise.all(imageFiles.map((file) => uploadItemImage(file)));
+      const images = (await Promise.all(imageFiles.map((file) => uploadItemImage(file))))
+        .map((image) => image.trim())
+        .filter(Boolean);
+      if (images.length === 0) {
+        throw new Error("Image upload finished without a usable image URL.");
+      }
+
       const body = {
-        title: form.get("title"),
-        shortDescription: form.get("shortDescription"),
-        fullDescription: form.get("fullDescription"),
-        category: form.get("category"),
-        dailyPrice: form.get("dailyPrice"),
-        securityDeposit: form.get("securityDeposit"),
-        location: form.get("location"),
-        condition: form.get("condition"),
-        availability: form.get("availability"),
-        brand: form.get("brand"),
-        model: form.get("model"),
-        minimumRentalDays: form.get("minimumRentalDays"),
+        title: textValue(form, "title"),
+        shortDescription: textValue(form, "shortDescription"),
+        fullDescription: textValue(form, "fullDescription"),
+        category: textValue(form, "category"),
+        dailyPrice: Number(textValue(form, "dailyPrice")),
+        securityDeposit: Number(textValue(form, "securityDeposit")),
+        location: textValue(form, "location"),
+        condition: textValue(form, "condition"),
+        availability: textValue(form, "availability"),
+        brand: textValue(form, "brand"),
+        model: textValue(form, "model"),
+        minimumRentalDays: Number(textValue(form, "minimumRentalDays") || 1),
         images,
       };
 

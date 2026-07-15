@@ -87,23 +87,23 @@ export function ManageItemsClient() {
           return editImagePreviews[index] || "";
         }),
       );
-      const cleanImages = images.map((image) => image.trim()).filter((image) => image && !image.startsWith("/"));
+      const cleanImages = images.map((image) => image.trim()).filter(Boolean);
       if (cleanImages.length === 0) {
         throw new Error("Please keep or upload at least one item image.");
       }
 
       await updateRentalItem(editingItem._id, {
-        title: String(form.get("title") || ""),
-        shortDescription: String(form.get("shortDescription") || ""),
-        fullDescription: String(form.get("fullDescription") || ""),
+        title: String(form.get("title") || "").trim(),
+        shortDescription: String(form.get("shortDescription") || "").trim(),
+        fullDescription: String(form.get("fullDescription") || "").trim(),
         category: form.get("category") as RentalItem["category"],
         dailyPrice: Number(form.get("dailyPrice") || 0),
         securityDeposit: Number(form.get("securityDeposit") || 0),
-        location: String(form.get("location") || ""),
+        location: String(form.get("location") || "").trim(),
         condition: form.get("condition") as RentalItem["condition"],
         availability: form.get("availability") as RentalItem["availability"],
-        brand: String(form.get("brand") || ""),
-        model: String(form.get("model") || ""),
+        brand: String(form.get("brand") || "").trim(),
+        model: String(form.get("model") || "").trim(),
         minimumRentalDays: Number(form.get("minimumRentalDays") || 1),
         images: cleanImages,
       });
