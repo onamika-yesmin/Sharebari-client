@@ -204,6 +204,11 @@ export async function getMyItems() {
   return payload.data.map(normalizeItem);
 }
 
+export async function updateRentalItem(id: string, body: Partial<RentalItem>) {
+  const payload = await apiPatch<{ data: Record<string, unknown> }>(`/api/items/${id}`, body);
+  return normalizeItem(payload.data);
+}
+
 export async function getCurrentUser(): Promise<CurrentUser> {
   const payload = await apiFetch<{ data: CurrentUser }>("/api/auth/me");
   return payload.data;
