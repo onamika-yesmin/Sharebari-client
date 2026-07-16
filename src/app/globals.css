@@ -6958,3 +6958,194 @@ body {
   background: rgba(204, 185, 170, 0.36);
   box-shadow: inset 3px 0 0 #2d1400;
 }
+
+body {
+  min-height: 100svh;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.loading-state {
+  width: 100%;
+  min-height: 100svh;
+  padding: clamp(28px, 5vw, 64px);
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.5), transparent 28rem),
+    radial-gradient(circle at 86% 18%, rgba(143, 121, 104, 0.22), transparent 28rem),
+    linear-gradient(180deg, #ffffff 0%, #ccb9aa 56%, rgba(143, 121, 104, 0.5) 100%);
+}
+
+.site-shell .loading-state {
+  min-height: min(62vh, 620px);
+  background: transparent;
+}
+
+.loading-card {
+  width: min(100%, 360px);
+}
+
+.request-status-card {
+  display: grid;
+  gap: 12px;
+  border: 1px solid rgba(45, 20, 0, 0.14);
+  border-left-width: 4px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(204, 185, 170, 0.28));
+  padding: 14px;
+}
+
+.request-status-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.request-status-icon {
+  width: 34px;
+  height: 34px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(45, 20, 0, 0.09);
+  color: #2d1400;
+}
+
+.request-status-head strong,
+.request-status-kicker {
+  display: block;
+}
+
+.request-status-head strong {
+  color: #2d1400;
+  line-height: 1.2;
+}
+
+.request-status-kicker {
+  margin-bottom: 2px;
+  color: #8f7968;
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.request-status-card p,
+.request-owner-note {
+  margin: 0;
+}
+
+.request-status-meta,
+.request-status-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.request-status-meta span {
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(45, 20, 0, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 4px 10px;
+  color: #2d1400;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.request-status-actions {
+  margin-top: 2px;
+}
+
+.request-status-actions .button-ghost {
+  min-height: 36px;
+  padding-inline: 11px;
+}
+
+.request-status-pending {
+  border-left-color: #8f7968;
+}
+
+.request-status-accepted {
+  border-left-color: #18794e;
+}
+
+.request-status-rejected,
+.request-status-cancelled {
+  border-left-color: #a83232;
+}
+
+.request-status-paid {
+  border-left-color: #2d1400;
+}
+
+.status-badge {
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.status-badge.status-pending,
+.request-status-pending .status-badge {
+  background: rgba(204, 185, 170, 0.7);
+  color: #2d1400;
+}
+
+.status-badge.status-accepted,
+.request-status-accepted .status-badge {
+  background: rgba(24, 121, 78, 0.14);
+  color: #145c3c;
+}
+
+.status-badge.status-rejected,
+.status-badge.status-cancelled,
+.request-status-rejected .status-badge,
+.request-status-cancelled .status-badge {
+  background: rgba(168, 50, 50, 0.12);
+  color: #842121;
+}
+
+.status-badge.status-paid,
+.request-status-paid .status-badge {
+  background: #2d1400;
+  color: #ffffff;
+}
+
+.request-state-note {
+  max-width: 230px;
+  justify-self: end;
+  color: #8f7968;
+  text-align: right;
+  line-height: 1.35;
+}
+
+.request-row .button {
+  min-width: 96px;
+}
+
+@media (max-width: 720px) {
+  .loading-state {
+    padding: 20px;
+  }
+
+  .request-status-head {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .request-status-head .status-badge {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+
+  .request-status-actions .button-ghost,
+  .request-row .button {
+    width: 100%;
+  }
+
+  .request-state-note {
+    max-width: none;
+    justify-self: start;
+    text-align: left;
+  }
+}

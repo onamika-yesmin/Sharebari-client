@@ -1,15 +1,31 @@
 "use client";
 
-import { Boxes, CalendarClock, ChevronDown, CircleDollarSign, Compass, CreditCard, Crown, Gauge, LogIn, PackageCheck, PackageSearch, Pencil, Plus, ShieldCheck, UserRound, UsersRound } from "lucide-react";
+import { Boxes, CalendarClock, Check, ChevronDown, CircleDollarSign, Compass, CreditCard, Crown, Gauge, LogIn, PackageCheck, PackageSearch, Pencil, Plus, ShieldCheck, UserRound, UsersRound, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { LoadingState } from "@/components/LoadingState";
 import { showError, showSuccess } from "@/lib/alerts";
-import { ApiError, apiPatch, createCheckoutSession, getAdminUsers, getCurrentUser, getDashboardStats, getMyRentalRequests, type AdminUser, type AdminUsersSummary, type CurrentUser, type DashboardStats, type RentalRequest, type UserRole } from "@/lib/api";
+import { ApiError, apiPatch, createCheckoutSession, getAdminUsers, getCurrentUser, getDashboardStats, getMyRentalRequests, getOwnerRentalRequests, updateRentalRequestStatus, type AdminUser, type AdminUsersSummary, type CurrentUser, type DashboardStats, type RentalRequest, type RentalRequestStatus, type UserRole } from "@/lib/api";
 import { formatMoney } from "@/lib/data";
 
 type DashboardTab = "admin" | "owner" | "renter" | "profile";
+
+const dashboardTabs: DashboardTab[] = ["admin", "owner", "renter", "profile"];
+
+const requestStatusDetails: Record<RentalRequestStatus, string> = {
+  pending: "Waiting for owner approval. You do not need to keep the checkout page open.",
+  accepted: "Owner accepted. You can pay now from here or from checkout.",
+  rejected: "Owner rejected this request. You can send a new request with updated details.",
+  cancelled: "This request was cancelled.",
+  paid: "Payment completed.",
+};
+
+function getRequestedDashboardTab() {
+  if (typeof window === "undefined") return null;
+  const tab = new URLSearchParams(window.location.search).get("tab");
+  return dashboardTabs.includes(tab as DashboardTab) ? tab as DashboardTab : null;
+}
 
 function hasAuthMarker() {
   return typeof window !== "undefined" && window.localStorage.getItem("sharebari_authenticated") === "true";
@@ -24,7 +40,9 @@ export function DashboardClient() {
   const [updatingUserId, setUpdatingUserId] = useState("");
   const [activeTab, setActiveTab] = useState<DashboardTab>("owner");
   const [rentalRequests, setRentalRequests] = useState<RentalRequest[]>([]);
+  const [ownerRequests, setOwnerRequests] = useState<RentalRequest[]>([]);
   const [payingRequestId, setPayingRequestId] = useState("");
+  const [updatingRequestId, setUpdatingRequestId] = useState("");
   const [message, setMessage] = useState("Loading dashboard...");
   const [isUnauthorized, setIsUnauthorized] = useState(false);
 
@@ -37,14 +55,27 @@ export function DashboardClient() {
       return;
     }
 
-    Promise.all([getDashboardStats(), getCurrentUser(), getMyRentalRequests()])
-      .then(([dashboardStats, currentUser, myRequests]) => {
+    Promise.all([
+      getDashboardStats(),
+      getCurrentUser(),
+      getMyRentalRequests(),
+      getOwnerRentalRequests().catch(() => [] as RentalRequest[]),
+    ])
+      .then(([dashboardStats, currentUser, myRequests, incomingRequests]) => {
         setStats(dashboardStats);
         setUser(currentUser);
         setRentalRequests(myRequests);
+        setOwnerRequests(incomingRequests);
         setMessage("");
-        if (currentUser.role === "admin") {
+
+        const requestedTab = getRequestedDashboardTab();
+        if (requestedTab && (requestedTab !== "admin" || currentUser.role === "admin")) {
+          setActiveTab(requestedTab);
+        } else if (currentUser.role === "admin") {
           setActiveTab("admin");
+        }
+
+        if (currentUser.role === "admin") {
           getAdminUsers()
             .then((payload) => {
               setAdminUsers(payload.data);
@@ -88,6 +119,25 @@ export function DashboardClient() {
       await showError("Could not update user", errorMessage);
     } finally {
       setUpdatingUserId("");
+    }
+  }
+
+  async function updateOwnerRequest(requestId: string, status: "accepted" | "rejected") {
+    setUpdatingRequestId(requestId);
+
+    try {
+      await updateRentalRequestStatus(requestId, { status });
+      const [incomingRequests, dashboardStats] = await Promise.all([
+        getOwnerRentalRequests(),
+        getDashboardStats(),
+      ]);
+      setOwnerRequests(incomingRequests);
+      setStats(dashboardStats);
+      await showSuccess(status === "accepted" ? "Request accepted" : "Request rejected", status === "accepted" ? "The renter will see the accepted status and can pay now." : "The renter will see the rejected status.");
+    } catch (error) {
+      await showError("Could not update request", error instanceof Error ? error.message : "Please try again.");
+    } finally {
+      setUpdatingRequestId("");
     }
   }
 
@@ -270,6 +320,39 @@ export function DashboardClient() {
       ) : null}
 
       <section className="dashboard-grid dashboard-grid-tight">
+        {activeTab === "owner" ? <div className="panel workspace-panel rental-requests-panel">
+          <div className="panel-title-row">
+            <div>
+              <h3>Incoming rental requests</h3>
+              <p>Accept or reject renter requests without leaving the dashboard.</p>
+            </div>
+            <span className="badge">{ownerRequests.length} requests</span>
+          </div>
+          {ownerRequests.length === 0 ? <p>No incoming requests yet.</p> : (
+            <div className="request-list">
+              {ownerRequests.map((request) => (
+                <div className="request-row" key={request._id}>
+                  <div>
+                    <strong>{request.item?.title || "Rental item"}</strong>
+                    <p>{request.renter?.name || "Renter"} - {request.rentalDays} day(s) - {formatMoney(request.totalAmount)}</p>
+                    <small>{request.renterMessage || requestStatusDetails[request.status]}</small>
+                  </div>
+                  <span className={`badge status-badge status-${request.status}`}>{request.status}</span>
+                  {request.status === "pending" ? (
+                    <div className="manage-actions">
+                      <button className="icon-button" type="button" disabled={updatingRequestId === request._id} onClick={() => updateOwnerRequest(request._id, "accepted")} aria-label="Accept request" title="Accept request">
+                        <Check size={18} aria-hidden="true" />
+                      </button>
+                      <button className="icon-button danger" type="button" disabled={updatingRequestId === request._id} onClick={() => updateOwnerRequest(request._id, "rejected")} aria-label="Reject request" title="Reject request">
+                        <X size={18} aria-hidden="true" />
+                      </button>
+                    </div>
+                  ) : <small className="request-state-note">{requestStatusDetails[request.status]}</small>}
+                </div>
+              ))}
+            </div>
+          )}
+        </div> : null}
         {activeTab === "owner" ? <div className="panel workspace-panel">
           <h3>Owner actions</h3>
           <p>Keep item data fresh so renters can trust price, condition, and pickup expectations.</p>
@@ -300,8 +383,9 @@ export function DashboardClient() {
                     <strong>{request.item?.title || "Rental item"}</strong>
                     <p>{request.rentalDays} day(s) · {formatMoney(request.totalAmount)}</p>
                     <small>Owner: {request.owner?.name || "ShareBari owner"}</small>
+                    <small>{request.ownerNote || requestStatusDetails[request.status]}</small>
                   </div>
-                  <span className="badge">{request.status}</span>
+                  <span className={`badge status-badge status-${request.status}`}>{request.status}</span>
                   {request.status === "accepted" ? (
                     <button className="button" type="button" disabled={payingRequestId === request._id} onClick={() => payAcceptedRequest(request._id)}>
                       <CreditCard size={17} aria-hidden="true" />
