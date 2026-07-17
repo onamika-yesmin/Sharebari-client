@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Compass, Gauge, Grid3X3, HelpCircle, LayoutDashboard, PlusCircle, Search, Sparkles } from "lucide-react";
+import { Compass, Gauge, Grid3X3, LayoutDashboard, PlusCircle, Search, Sparkles } from "lucide-react";
 import { ItemCard } from "@/components/ItemCard";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -160,28 +160,17 @@ export default async function Home() {
         </section>
 
         <section className="section scroll-reveal">
-          <div className="container grid grid-3">
-            <div className="card"><h3>Renter friendly</h3><p>Clear daily prices, deposits, condition labels, and owner details after login.</p></div>
-            <div className="card"><h3>Owner controlled</h3><p>Owners can list items, manage availability, and delete their own listings.</p></div>
-            <div className="card"><h3>Payment connected</h3><p>Checkout totals are calculated on the server before opening Stripe payment.</p></div>
-          </div>
-        </section>
-
-        <section className="section-soft scroll-reveal">
-          <div className="container section-head">
-            <div>
-              <h2>Questions before renting?</h2>
-              <p>Read the help page or start exploring nearby items now.</p>
+          <div className="container">
+            <div className="section-head">
+              <div>
+                <h2>Rent with confidence</h2>
+                <p>Simple marketplace checks keep each rental clear before checkout.</p>
+              </div>
             </div>
-            <div className="action-row">
-              <Link className="button-ghost" href="/help">
-                <HelpCircle size={17} aria-hidden="true" />
-                Help Center
-              </Link>
-              <Link className="button" href="/explore">
-                <Compass size={17} aria-hidden="true" />
-                Browse Items
-              </Link>
+            <div className="grid grid-3">
+              <div className="card"><h3>Renter friendly</h3><p>Clear daily prices, deposits, condition labels, and owner details after login.</p></div>
+              <div className="card"><h3>Owner controlled</h3><p>Owners can list items, manage availability, and remove their own listings anytime.</p></div>
+              <div className="card"><h3>Payment connected</h3><p>Checkout totals are calculated on the server before opening Stripe payment.</p></div>
             </div>
           </div>
         </section>
